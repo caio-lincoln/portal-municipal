@@ -1,11 +1,11 @@
 "use client"
 
-import { Bell, Home, FileText, Calendar, Newspaper } from "lucide-react"
+import { Home, FileText, Calendar, Newspaper, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useAccessibility } from "@/components/accessibility-provider"
+import { NotificationsPopover } from "@/components/notifications-popover"
 
-type NavPage = "dashboard" | "services" | "appointments" | "news"
+type NavPage = "dashboard" | "services" | "appointments" | "news" | "departments"
 
 export function Header({
   onMenuClick,
@@ -23,6 +23,7 @@ export function Header({
     { id: "services", label: "Solicitações", icon: FileText },
     { id: "appointments", label: "Agendamentos", icon: Calendar },
     { id: "news", label: "Notícias", icon: Newspaper },
+    { id: "departments", label: "Órgãos", icon: Building2 },
   ]
 
   return (
@@ -41,26 +42,12 @@ export function Header({
                 </span>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="relative text-blue-700 md:hidden" aria-label="Notificações">
-              <Bell className="h-5 w-5" />
-              <Badge
-                className="absolute -top-0.5 -right-0.5 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                variant="destructive"
-              >
-                3
-              </Badge>
-            </Button>
+            <div className="md:hidden">
+              <NotificationsPopover />
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative text-blue-700" aria-label="Notificações">
-              <Bell className="h-5 w-5" />
-              <Badge
-                className="absolute -top-0.5 -right-0.5 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                variant="destructive"
-              >
-                3
-              </Badge>
-            </Button>
+            <NotificationsPopover />
           </div>
         </div>
         <nav className="bg-gradient-to-r from-blue-700 to-indigo-700 py-2 sm:py-3 px-2 sm:px-4 md:px-6">

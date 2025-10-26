@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,6 +18,11 @@ export function ServiceRequests() {
   const { speak } = useAccessibility()
   const [selectedRequest, setSelectedRequest] = useState<null | (typeof requests)[number]>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [showFilters, setShowFilters] = useState(false)
 
   const requests = [
     {
@@ -57,6 +62,37 @@ export function ServiceRequests() {
       priority: "Média",
     },
   ]
+
+  const filteredRequests = useMemo(() => {
+    return requests.filter((request) => {
+      // Search filter
+      const matchesSearch =
+        searchQuery === "" ||
+        request.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.location.toLowerCase().includes(searchQuery.toLowerCase())
+
+      // Status filter
+      const matchesStatus = statusFilter === "all" || request.status === statusFilter
+
+      // Category filter
+      const matchesCategory = categoryFilter === "all" || request.type === categoryFilter
+
+      return matchesSearch && matchesStatus && matchesCategory
+    })
+  }, [searchQuery, statusFilter, categoryFilter])
+
+  const clearFilters = () => {
+    setSearchQuery("")
+    setStatusFilter("all")
+    setCategoryFilter("all")
+    speak("Filtros limpos")
+  }
+
+  const activeFiltersCount = [searchQuery !== "", statusFilter !== "all", categoryFilter !== "all"].filter(
+    Boolean,
+  ).length
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -214,176 +250,222 @@ export function ServiceRequests() {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Buscar por protocolo..." className="pl-8 min-h-[44px]" />
+                <Input
+                  placeholder="Buscar por protocolo, tipo ou local..."
+                  className="pl-8 min-h-[44px]"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               <Button
                 variant="outline"
-                size="icon"
+                onClick={() => setShowFilters(!showFilters)}
                 aria-label="Filtrar"
-                className="w-full sm:w-auto min-h-[44px] bg-transparent"
+                className="w-full sm:w-auto min-h-[44px] bg-transparent relative"
               >
                 <Filter className="h-4 w-4" />
                 <span className="sm:hidden ml-2">Filtrar</span>
+                {activeFiltersCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    {activeFiltersCount}
+                  </Badge>
+                )}
               </Button>
             </div>
+
+            {showFilters && (
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 p-4 bg-muted/50 rounded-lg">
+                <div className="space-y-2">
+                  <Label htmlFor="status-filter" className="text-sm">
+                    Status
+                  </Label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger id="status-filter" className="min-h-[44px]">
+                      <SelectValue placeholder="Todos os status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os status</SelectItem>
+                      <SelectItem value="Pendente">Pendente</SelectItem>
+                      <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+                      <SelectItem value="Concluído">Concluído</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category-filter" className="text-sm">
+                    Categoria
+                  </Label>
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger id="category-filter" className="min-h-[44px]">
+                      <SelectValue placeholder="Todas as categorias" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as categorias</SelectItem>
+                      <SelectItem value="Iluminação Pública">Iluminação Pública</SelectItem>
+                      <SelectItem value="Manutenção de Rua">Manutenção de Rua</SelectItem>
+                      <SelectItem value="Coleta de Lixo">Coleta de Lixo</SelectItem>
+                      <SelectItem value="Poda de Árvore">Poda de Árvore</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {activeFiltersCount > 0 && (
+                  <div className="sm:col-span-2">
+                    <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto min-h-[40px]">
+                      Limpar filtros
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
-          <Tabs defaultValue="all">
+          <Tabs value={statusFilter} onValueChange={setStatusFilter}>
             <TabsList className="mb-4 w-full justify-start overflow-x-auto flex-nowrap">
               <TabsTrigger value="all" className="text-xs sm:text-sm whitespace-nowrap">
-                Todas
+                Todas ({requests.length})
               </TabsTrigger>
-              <TabsTrigger value="pending" className="text-xs sm:text-sm whitespace-nowrap">
-                Pendentes
+              <TabsTrigger value="Pendente" className="text-xs sm:text-sm whitespace-nowrap">
+                Pendentes ({requests.filter((r) => r.status === "Pendente").length})
               </TabsTrigger>
-              <TabsTrigger value="progress" className="text-xs sm:text-sm whitespace-nowrap">
-                Em Andamento
+              <TabsTrigger value="Em Andamento" className="text-xs sm:text-sm whitespace-nowrap">
+                Em Andamento ({requests.filter((r) => r.status === "Em Andamento").length})
               </TabsTrigger>
-              <TabsTrigger value="completed" className="text-xs sm:text-sm whitespace-nowrap">
-                Concluídas
+              <TabsTrigger value="Concluído" className="text-xs sm:text-sm whitespace-nowrap">
+                Concluídas ({requests.filter((r) => r.status === "Concluído").length})
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="all" className="space-y-3 sm:space-y-4">
-              {requests.map((request) => (
-                <Card key={request.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-3 sm:p-4 md:p-6">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                      <div className="flex-1 space-y-2 sm:space-y-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {getStatusIcon(request.status)}
-                          <h3 className="font-semibold text-sm sm:text-base flex-1 min-w-0">{request.type}</h3>
-                          <Badge variant={getPriorityVariant(request.priority)} className="text-xs">
-                            {request.priority}
-                          </Badge>
-                        </div>
-                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                          {request.description}
-                        </p>
-                        <div className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground">
-                          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                          <span className="break-words">{request.location}</span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-muted-foreground">
-                          <span>Protocolo: {request.id}</span>
-                          <span className="hidden sm:inline">•</span>
-                          <span>Aberto em: {request.date}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0">
-                        <Badge variant={getStatusVariant(request.status)} className="text-xs">
-                          {request.status}
-                        </Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedRequest(request)
-                            setIsDetailsOpen(true)
-                          }}
-                          className="min-h-[36px] text-xs sm:text-sm"
-                        >
-                          Ver Detalhes
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="max-w-[95vw] sm:max-w-2xl md:max-w-3xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg sm:text-xl">Detalhes da Solicitação</DialogTitle>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Informações completas da solicitação selecionada
-                    </p>
-                  </DialogHeader>
-                  {selectedRequest && (
-                    <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div className="space-y-1 sm:space-y-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Protocolo</p>
-                        <p className="font-medium text-sm sm:text-base">{selectedRequest.id}</p>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Tipo</p>
-                        <p className="font-medium text-sm sm:text-base">{selectedRequest.type}</p>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2 sm:col-span-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Descrição</p>
-                        <p className="font-medium text-sm sm:text-base">{selectedRequest.description}</p>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Status</p>
-                        <Badge variant={getStatusVariant(selectedRequest.status)} className="w-fit text-xs">
-                          {selectedRequest.status}
-                        </Badge>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Prioridade</p>
-                        <Badge variant={getPriorityVariant(selectedRequest.priority)} className="w-fit text-xs">
-                          {selectedRequest.priority}
-                        </Badge>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2 sm:col-span-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Localização</p>
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                          <p className="font-medium text-sm sm:text-base break-words">{selectedRequest.location}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-1 sm:space-y-2">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Abertura</p>
-                        <p className="font-medium text-sm sm:text-base">{selectedRequest.date}</p>
-                      </div>
-                    </div>
+            <TabsContent value={statusFilter} className="space-y-3 sm:space-y-4">
+              {filteredRequests.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    Nenhuma solicitação encontrada com os filtros aplicados.
+                  </p>
+                  {activeFiltersCount > 0 && (
+                    <Button variant="link" onClick={clearFilters} className="mt-2">
+                      Limpar filtros
+                    </Button>
                   )}
-                  <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-2 sm:gap-3">
-                    <Button
-                      onClick={() => {
-                        if (selectedRequest) {
-                          speak(
-                            `Solicitação ${selectedRequest.id}, ${selectedRequest.type}. Status ${selectedRequest.status}. Local ${selectedRequest.location}.`,
-                          )
-                        }
-                      }}
-                      className="w-full sm:w-auto min-h-[44px]"
-                    >
-                      Ler Detalhes
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDetailsOpen(false)}
-                      className="w-full sm:w-auto min-h-[44px]"
-                    >
-                      Fechar
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </TabsContent>
-
-            <TabsContent value="pending">
-              <p className="text-center text-sm sm:text-base text-muted-foreground py-6 sm:py-8">
-                Filtrando solicitações pendentes...
-              </p>
-            </TabsContent>
-
-            <TabsContent value="progress">
-              <p className="text-center text-sm sm:text-base text-muted-foreground py-6 sm:py-8">
-                Filtrando solicitações em andamento...
-              </p>
-            </TabsContent>
-
-            <TabsContent value="completed">
-              <p className="text-center text-sm sm:text-base text-muted-foreground py-6 sm:py-8">
-                Filtrando solicitações concluídas...
-              </p>
+                </div>
+              ) : (
+                filteredRequests.map((request) => (
+                  <Card key={request.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-3 sm:p-4 md:p-6">
+                      <div className="flex flex-col gap-3 sm:gap-4">
+                        <div className="flex-1 space-y-2 sm:space-y-3">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {getStatusIcon(request.status)}
+                            <h3 className="font-semibold text-sm sm:text-base flex-1 min-w-0">{request.type}</h3>
+                            <Badge variant={getPriorityVariant(request.priority)} className="text-xs">
+                              {request.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                            {request.description}
+                          </p>
+                          <div className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground">
+                            <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                            <span className="break-words">{request.location}</span>
+                          </div>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-muted-foreground">
+                            <span>Protocolo: {request.id}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span>Aberto em: {request.date}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0">
+                          <Badge variant={getStatusVariant(request.status)} className="text-xs">
+                            {request.status}
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedRequest(request)
+                              setIsDetailsOpen(true)
+                            }}
+                            className="min-h-[36px] text-xs sm:text-sm"
+                          >
+                            Ver Detalhes
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl md:max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-xl">Detalhes da Solicitação</DialogTitle>
+            <p className="text-xs sm:text-sm text-muted-foreground">Informações completas da solicitação selecionada</p>
+          </DialogHeader>
+          {selectedRequest && (
+            <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Protocolo</p>
+                <p className="font-medium text-sm sm:text-base">{selectedRequest.id}</p>
+              </div>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Tipo</p>
+                <p className="font-medium text-sm sm:text-base">{selectedRequest.type}</p>
+              </div>
+              <div className="space-y-1 sm:space-y-2 sm:col-span-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Descrição</p>
+                <p className="font-medium text-sm sm:text-base">{selectedRequest.description}</p>
+              </div>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Status</p>
+                <Badge variant={getStatusVariant(selectedRequest.status)} className="w-fit text-xs">
+                  {selectedRequest.status}
+                </Badge>
+              </div>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Prioridade</p>
+                <Badge variant={getPriorityVariant(selectedRequest.priority)} className="w-fit text-xs">
+                  {selectedRequest.priority}
+                </Badge>
+              </div>
+              <div className="space-y-1 sm:space-y-2 sm:col-span-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Localização</p>
+                <div className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <p className="font-medium text-sm sm:text-base break-words">{selectedRequest.location}</p>
+                </div>
+              </div>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm text-muted-foreground">Abertura</p>
+                <p className="font-medium text-sm sm:text-base">{selectedRequest.date}</p>
+              </div>
+            </div>
+          )}
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <Button
+              onClick={() => {
+                if (selectedRequest) {
+                  speak(
+                    `Solicitação ${selectedRequest.id}, ${selectedRequest.type}. Status ${selectedRequest.status}. Local ${selectedRequest.location}.`,
+                  )
+                }
+              }}
+              className="w-full sm:w-auto min-h-[44px]"
+            >
+              Ler Detalhes
+            </Button>
+            <Button variant="outline" onClick={() => setIsDetailsOpen(false)} className="w-full sm:w-auto min-h-[44px]">
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

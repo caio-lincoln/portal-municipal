@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { CalendarIcon, Clock, MapPin, Plus, User } from "lucide-react"
+import { CalendarIcon, Clock, MapPin, Plus, User, Search } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAccessibility } from "@/components/accessibility-provider"
 import {
@@ -32,25 +32,10 @@ export function Appointments() {
   const [showNewAppointment, setShowNewAppointment] = useState(false)
   const { speak } = useAccessibility()
 
-  const [rescheduleDialog, setRescheduleDialog] = useState<{
-    open: boolean
-    appointment: Appointment | null
-    newDate: string
-    newTime: string
-  }>({
-    open: false,
-    appointment: null,
-    newDate: "",
-    newTime: "",
-  })
-
-  const [cancelDialog, setCancelDialog] = useState<{
-    open: boolean
-    appointment: Appointment | null
-  }>({
-    open: false,
-    appointment: null,
-  })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [dateFilter, setDateFilter] = useState("")
+  const [statusFilterValue, setStatusFilterValue] = useState("all")
+  const [showFilters, setShowFilters] = useState(false)
 
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
@@ -90,6 +75,37 @@ export function Appointments() {
     { value: "tax", label: "Atendimento Fiscal", department: "Secretaria de Finanças" },
   ]
 
+  const filteredAppointments = useMemo(() => {
+    return appointments.filter((appointment) => {
+      // Search filter
+      const matchesSearch =
+        searchQuery === "" ||
+        appointment.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        appointment.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        appointment.location.toLowerCase().includes(searchQuery.toLowerCase())
+
+      // Date filter
+      const matchesDate = dateFilter === "" || appointment.date.includes(dateFilter)
+
+      // Status filter
+      const matchesStatus = statusFilterValue === "all" || appointment.status === statusFilterValue
+
+      return matchesSearch && matchesDate && matchesStatus
+    })
+  }, [appointments, searchQuery, dateFilter, statusFilterValue])
+
+  const [rescheduleDialog, setRescheduleDialog] = useState<{
+    open: boolean
+    appointment: Appointment | null
+    newDate: string
+    newTime: string
+  }>({
+    open: false,
+    appointment: null,
+    newDate: "",
+    newTime: "",
+  })
+
   const handleReschedule = (appointment: Appointment) => {
     setRescheduleDialog({
       open: true,
@@ -120,6 +136,11 @@ export function Appointments() {
     speak(`Agendamento reagendado para ${formattedDate} às ${rescheduleDialog.newTime}`)
     setRescheduleDialog({ open: false, appointment: null, newDate: "", newTime: "" })
   }
+
+  const [cancelDialog, setCancelDialog] = useState<{ open: boolean; appointment: Appointment | null }>({
+    open: false,
+    appointment: null,
+  })
 
   const handleCancel = (appointment: Appointment) => {
     setCancelDialog({
@@ -152,6 +173,15 @@ export function Appointments() {
     }
   }
 
+  const clearFilters = () => {
+    setSearchQuery("")
+    setDateFilter("")
+    setStatusFilterValue("all")
+    speak("Filtros limpos")
+  }
+
+  const activeFiltersCount = [searchQuery !== "", dateFilter !== "", statusFilterValue !== "all"].filter(Boolean).length
+
   return (
     <div className="space-y-6 sm:space-y-8 lg:space-y-10 px-2 sm:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -168,6 +198,82 @@ export function Appointments() {
           Novo Agendamento
         </Button>
       </div>
+
+      <Card>
+        <CardHeader className="px-4 sm:px-6">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg sm:text-xl">Filtrar Agendamentos</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)} className="min-h-[40px]">
+                {showFilters ? "Ocultar" : "Mostrar"} Filtros
+                {activeFiltersCount > 0 && (
+                  <Badge className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    {activeFiltersCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+
+            {showFilters && (
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 p-4 bg-muted/50 rounded-lg">
+                <div className="space-y-2">
+                  <Label htmlFor="search-appointments" className="text-sm">
+                    Buscar
+                  </Label>
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search-appointments"
+                      placeholder="Serviço ou departamento..."
+                      className="pl-8 min-h-[44px]"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="date-filter" className="text-sm">
+                    Data
+                  </Label>
+                  <Input
+                    id="date-filter"
+                    type="date"
+                    className="min-h-[44px]"
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="status-filter-appointments" className="text-sm">
+                    Status
+                  </Label>
+                  <Select value={statusFilterValue} onValueChange={setStatusFilterValue}>
+                    <SelectTrigger id="status-filter-appointments" className="min-h-[44px]">
+                      <SelectValue placeholder="Todos os status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os status</SelectItem>
+                      <SelectItem value="Confirmado">Confirmado</SelectItem>
+                      <SelectItem value="Concluído">Concluído</SelectItem>
+                      <SelectItem value="Cancelado">Cancelado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {activeFiltersCount > 0 && (
+                  <div className="sm:col-span-3">
+                    <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto min-h-[40px]">
+                      Limpar filtros ({activeFiltersCount})
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </CardHeader>
+      </Card>
 
       {showNewAppointment && (
         <Card className="border-l-4 border-blue-700">
@@ -274,102 +380,122 @@ export function Appointments() {
       <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader className="px-4 sm:px-6">
-            <CardTitle className="text-lg sm:text-xl">Próximos Agendamentos</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">
+              Próximos Agendamentos ({filteredAppointments.filter((apt) => apt.status === "Confirmado").length})
+            </CardTitle>
             <CardDescription className="text-sm">Seus compromissos confirmados</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 px-4 sm:px-6">
-            {appointments
-              .filter((apt) => apt.status === "Confirmado")
-              .map((appointment) => (
-                <Card key={appointment.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
-                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.department}</p>
+            {filteredAppointments.filter((apt) => apt.status === "Confirmado").length === 0 ? (
+              <p className="text-center text-sm text-muted-foreground py-4">
+                Nenhum agendamento confirmado encontrado.
+              </p>
+            ) : (
+              filteredAppointments
+                .filter((apt) => apt.status === "Confirmado")
+                .map((appointment) => (
+                  <Card key={appointment.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                              {appointment.department}
+                            </p>
+                          </div>
+                          <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
+                            {appointment.status}
+                          </Badge>
                         </div>
-                        <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
-                          {appointment.status}
-                        </Badge>
-                      </div>
 
-                      <div className="space-y-2 text-xs sm:text-sm">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <CalendarIcon className="h-4 w-4 shrink-0" />
-                          <span>{appointment.date}</span>
+                        <div className="space-y-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <CalendarIcon className="h-4 w-4 shrink-0" />
+                            <span>{appointment.date}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Clock className="h-4 w-4 shrink-0" />
+                            <span>{appointment.time}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <MapPin className="h-4 w-4 shrink-0" />
+                            <span className="break-words">{appointment.location}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Clock className="h-4 w-4 shrink-0" />
-                          <span>{appointment.time}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="h-4 w-4 shrink-0" />
-                          <span className="break-words">{appointment.location}</span>
-                        </div>
-                      </div>
 
-                      <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:flex-1 bg-transparent min-h-[40px]"
-                          onClick={() => handleReschedule(appointment)}
-                        >
-                          Reagendar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:flex-1 bg-transparent min-h-[40px]"
-                          onClick={() => handleCancel(appointment)}
-                        >
-                          Cancelar
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full sm:flex-1 bg-transparent min-h-[40px]"
+                            onClick={() => handleReschedule(appointment)}
+                          >
+                            Reagendar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full sm:flex-1 bg-transparent min-h-[40px]"
+                            onClick={() => handleCancel(appointment)}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="px-4 sm:px-6">
-            <CardTitle className="text-lg sm:text-xl">Histórico de Agendamentos</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">
+              Histórico de Agendamentos (
+              {filteredAppointments.filter((apt) => apt.status === "Concluído" || apt.status === "Cancelado").length})
+            </CardTitle>
             <CardDescription className="text-sm">Agendamentos anteriores</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 px-4 sm:px-6">
-            {appointments
-              .filter((apt) => apt.status === "Concluído")
-              .map((appointment) => (
-                <Card key={appointment.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
-                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.department}</p>
+            {filteredAppointments.filter((apt) => apt.status === "Concluído" || apt.status === "Cancelado").length ===
+            0 ? (
+              <p className="text-center text-sm text-muted-foreground py-4">Nenhum histórico encontrado.</p>
+            ) : (
+              filteredAppointments
+                .filter((apt) => apt.status === "Concluído" || apt.status === "Cancelado")
+                .map((appointment) => (
+                  <Card key={appointment.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                              {appointment.department}
+                            </p>
+                          </div>
+                          <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
+                            {appointment.status}
+                          </Badge>
                         </div>
-                        <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
-                          {appointment.status}
-                        </Badge>
-                      </div>
 
-                      <div className="space-y-2 text-xs sm:text-sm">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <CalendarIcon className="h-4 w-4 shrink-0" />
-                          <span>{appointment.date}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Clock className="h-4 w-4 shrink-0" />
-                          <span>{appointment.time}</span>
+                        <div className="space-y-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <CalendarIcon className="h-4 w-4 shrink-0" />
+                            <span>{appointment.date}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Clock className="h-4 w-4 shrink-0" />
+                            <span>{appointment.time}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+            )}
           </CardContent>
         </Card>
       </div>

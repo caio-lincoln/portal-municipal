@@ -181,166 +181,169 @@ html.zoom-150 {
 
 /* Added new cognitive and reading accessibility styles */
 
-/* Dyslexia-friendly font */
-html.dyslexia-font {
+/* Enhanced accessibility overrides to ensure settings work on all pages and elements */
+
+/* High contrast mode - override all text colors to use semantic tokens */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: var(--foreground) !important;
+}
+
+html.dark p,
+html.dark span,
+html.dark div {
+  color: inherit;
+}
+
+/* Ensure page titles and headings respect font size settings */
+html.text-large h1 {
+  font-size: 2.5rem !important;
+}
+
+html.text-large h2 {
+  font-size: 2rem !important;
+}
+
+html.text-large h3 {
+  font-size: 1.75rem !important;
+}
+
+html.text-xlarge h1 {
+  font-size: 3rem !important;
+}
+
+html.text-xlarge h2 {
+  font-size: 2.5rem !important;
+}
+
+html.text-xlarge h3 {
+  font-size: 2rem !important;
+}
+
+/* Ensure dyslexia font applies to all text including titles */
+html.dyslexia-font h1,
+html.dyslexia-font h2,
+html.dyslexia-font h3,
+html.dyslexia-font h4,
+html.dyslexia-font h5,
+html.dyslexia-font h6,
+html.dyslexia-font p,
+html.dyslexia-font span,
+html.dyslexia-font button,
+html.dyslexia-font input,
+html.dyslexia-font textarea,
+html.dyslexia-font label {
   font-family: "OpenDyslexic", sans-serif !important;
 }
 
-html.dyslexia-font * {
-  font-family: "OpenDyslexic", sans-serif !important;
+/* Ensure colorblind modes affect all colored text */
+html.colorblind-grayscale .text-blue-900,
+html.colorblind-grayscale .text-blue-700,
+html.colorblind-grayscale .text-blue-600,
+html.colorblind-grayscale .text-green-600,
+html.colorblind-grayscale .text-yellow-600,
+html.colorblind-grayscale .text-red-600 {
+  filter: grayscale(1);
 }
 
-/* Line spacing options */
-html.line-normal * {
-  line-height: 1.5;
-}
-html.line-relaxed * {
-  line-height: 1.75;
-}
-html.line-loose * {
-  line-height: 2;
+/* Ensure simplified layout affects all pages */
+html.simplified-layout * {
+  transition: none !important;
 }
 
-/* Letter spacing options */
-html.letter-normal * {
-  letter-spacing: normal;
-}
-html.letter-wide * {
-  letter-spacing: 0.05em;
-}
-html.letter-wider * {
-  letter-spacing: 0.1em;
+html.simplified-layout .shadow-sm,
+html.simplified-layout .shadow-md {
+  box-shadow: none !important;
+  border: 1px solid var(--border) !important;
 }
 
-/* Focus mode - dims non-focused content */
-html.focus-mode main > *:not(:focus-within) {
-  opacity: 0.6;
+/* Ensure focus mode works on all pages */
+html.focus-mode body > * > *:not(:focus-within) {
+  opacity: 0.5;
   transition: opacity 0.3s ease;
 }
 
-html.focus-mode main > *:focus-within {
+html.focus-mode body > * > *:focus-within {
   opacity: 1;
   position: relative;
-  z-index: 1;
+  z-index: 10;
 }
 
-/* Reading guide - highlights current line */
-html.reading-guide p:hover,
-html.reading-guide li:hover,
-html.reading-guide h1:hover,
-html.reading-guide h2:hover,
-html.reading-guide h3:hover {
-  background-color: rgba(var(--primary), 0.1);
-  outline: 2px solid rgba(var(--primary), 0.3);
+/* Ensure reading guide works on all text elements */
+html.reading-guide div:hover,
+html.reading-guide section:hover,
+html.reading-guide article:hover {
+  background-color: rgba(66, 153, 225, 0.1);
+  outline: 2px solid rgba(66, 153, 225, 0.3);
   outline-offset: 2px;
+  transition: all 0.2s ease;
 }
 
-/* Simplified layout - reduces visual complexity */
-html.simplified-layout .shadow-lg,
-html.simplified-layout .shadow-xl,
-html.simplified-layout .shadow-2xl {
-  box-shadow: none !important;
+/* Ensure line and letter spacing apply to all text */
+html.line-relaxed h1,
+html.line-relaxed h2,
+html.line-relaxed h3,
+html.line-relaxed p,
+html.line-relaxed span,
+html.line-relaxed div {
+  line-height: 1.75 !important;
 }
 
-html.simplified-layout .backdrop-blur-xl,
-html.simplified-layout .backdrop-blur-lg {
-  backdrop-filter: none !important;
+html.line-loose h1,
+html.line-loose h2,
+html.line-loose h3,
+html.line-loose p,
+html.line-loose span,
+html.line-loose div {
+  line-height: 2 !important;
 }
 
-html.simplified-layout .bg-gradient-to-br,
-html.simplified-layout .bg-gradient-to-r {
-  background-image: none !important;
-  background-color: var(--primary) !important;
+html.letter-wide h1,
+html.letter-wide h2,
+html.letter-wide h3,
+html.letter-wide p,
+html.letter-wide span,
+html.letter-wide button {
+  letter-spacing: 0.05em !important;
 }
 
-/* Reduced motion */
-html.reduce-motion *,
-html.reduce-motion *::before,
-html.reduce-motion *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-  scroll-behavior: auto !important;
+html.letter-wider h1,
+html.letter-wider h2,
+html.letter-wider h3,
+html.letter-wider p,
+html.letter-wider span,
+html.letter-wider button {
+  letter-spacing: 0.1em !important;
 }
 
-/* Accessible colorblind palettes (override CSS variables globally) */
-html.cb-palette-grayscale {
-  --primary: oklch(0.3 0 0);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.7 0 0);
-  --secondary-foreground: oklch(0.15 0 0);
-  --accent: oklch(0.85 0 0);
-  --accent-foreground: oklch(0.2 0 0);
-  --muted: oklch(0.92 0 0);
-  --muted-foreground: oklch(0.4 0 0);
-  --destructive: oklch(0.4 0 0);
-  --destructive-foreground: oklch(0.98 0 0);
-  --ring: oklch(0.3 0 0);
-  --chart-1: oklch(0.35 0 0);
-  --chart-2: oklch(0.5 0 0);
-  --chart-3: oklch(0.65 0 0);
-  --chart-4: oklch(0.8 0 0);
-  --chart-5: oklch(0.92 0 0);
+/* Ensure contrast boost affects all elements */
+html.contrast-boost {
+  --foreground: oklch(0.05 0.005 240);
+  --muted-foreground: oklch(0.3 0.01 240);
 }
 
-html.cb-palette-deuteranopia {
-  /* Emphasize blues and ambers for distinctiveness */
-  --primary: oklch(0.62 0.12 250);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.2 0.01 240);
-  --accent: oklch(0.78 0.12 60);
-  --accent-foreground: oklch(0.15 0 0);
-  --muted: oklch(0.97 0.003 240);
-  --muted-foreground: oklch(0.48 0.01 240);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --ring: oklch(0.62 0.12 250);
-  --chart-1: oklch(0.62 0.12 250);
-  --chart-2: oklch(0.75 0.12 60);
-  --chart-3: oklch(0.58 0.1 160);
-  --chart-4: oklch(0.52 0.14 200);
-  --chart-5: oklch(0.48 0.12 180);
+html.dark.contrast-boost {
+  --foreground: oklch(1 0 0);
+  --muted-foreground: oklch(0.85 0.01 240);
 }
 
-html.cb-palette-protanopia {
-  /* Avoid reds; use blues, teals, and ambers */
-  --primary: oklch(0.62 0.12 250);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.2 0.01 240);
-  --accent: oklch(0.72 0.1 200);
-  --accent-foreground: oklch(0.15 0 0);
-  --muted: oklch(0.97 0.003 240);
-  --muted-foreground: oklch(0.48 0.01 240);
-  --destructive: oklch(0.5 0.16 40);
-  --destructive-foreground: oklch(0.99 0 0);
-  --ring: oklch(0.62 0.12 250);
-  --chart-1: oklch(0.62 0.12 250);
-  --chart-2: oklch(0.72 0.1 200);
-  --chart-3: oklch(0.65 0.1 160);
-  --chart-4: oklch(0.75 0.12 60);
-  --chart-5: oklch(0.48 0.12 180);
+/* Ensure page zoom affects all content including fixed elements */
+html.zoom-125 body,
+html.zoom-125 header,
+html.zoom-125 main,
+html.zoom-125 footer {
+  zoom: 1.25;
 }
 
-html.cb-palette-tritanopia {
-  /* Avoid reliance on blues; prefer oranges and greens */
-  --primary: oklch(0.68 0.14 60);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.94 0.02 145);
-  --secondary-foreground: oklch(0.2 0.01 240);
-  --accent: oklch(0.62 0.14 145);
-  --accent-foreground: oklch(0.15 0 0);
-  --muted: oklch(0.97 0.003 240);
-  --muted-foreground: oklch(0.48 0.01 240);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --ring: oklch(0.68 0.14 60);
-  --chart-1: oklch(0.68 0.14 60);
-  --chart-2: oklch(0.62 0.14 145);
-  --chart-3: oklch(0.52 0.14 200);
-  --chart-4: oklch(0.48 0.12 180);
-  --chart-5: oklch(0.4 0.1 160);
+html.zoom-150 body,
+html.zoom-150 header,
+html.zoom-150 main,
+html.zoom-150 footer {
+  zoom: 1.5;
 }
 
 /* Cursor pointer para elementos interativos */

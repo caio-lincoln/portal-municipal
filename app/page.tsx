@@ -6,12 +6,15 @@ import { Dashboard } from "@/components/dashboard"
 import { ServiceRequests } from "@/components/service-requests"
 import { Appointments } from "@/components/appointments"
 import { News } from "@/components/news"
+import { DepartmentsInfo } from "@/components/departments-info"
 import { VoiceChatModal } from "@/components/voice-chat-modal"
 import { AccessibilityModal } from "@/components/accessibility-modal"
 import { LibrasButton } from "@/components/libras-button"
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState<"dashboard" | "services" | "appointments" | "news">("dashboard")
+  const [currentPage, setCurrentPage] = useState<"dashboard" | "services" | "appointments" | "news" | "departments">(
+    "dashboard",
+  )
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -21,6 +24,7 @@ export default function Home() {
         {currentPage === "services" && <ServiceRequests />}
         {currentPage === "appointments" && <Appointments />}
         {currentPage === "news" && <News />}
+        {currentPage === "departments" && <DepartmentsInfo />}
       </main>
       <LibrasButton />
       <VoiceChatModal onNavigate={setCurrentPage} />

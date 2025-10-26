@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useAccessibility } from "@/components/accessibility-provider"
 import { Card } from "@/components/ui/card"
 
-type Page = "dashboard" | "services" | "appointments" | "news"
+type Page = "dashboard" | "services" | "appointments" | "news" | "departments"
 
 interface VoiceChatModalProps {
   onNavigate: (page: Page) => void
@@ -102,6 +102,18 @@ export function VoiceChatModal({ onNavigate }: VoiceChatModalProps) {
       ],
       appointments: ["agendamento", "agendamentos", "agenda", "compromissos", "marcar", "agendar"],
       news: ["noticia", "noticias", "novidades", "news", "informes"],
+      departments: [
+        "orgao",
+        "orgaos",
+        "departamento",
+        "departamentos",
+        "responsavel",
+        "responsaveis",
+        "quem resolve",
+        "contato",
+        "telefone",
+        "endereco",
+      ],
     }
 
     const scores: Partial<Record<Page, number>> = {}
@@ -198,12 +210,14 @@ export function VoiceChatModal({ onNavigate }: VoiceChatModalProps) {
             ? "Abrindo a aba de Agendamentos."
             : target === "news"
               ? "Abrindo a aba de Notícias."
-              : "Abrindo o painel do cidadão."
+              : target === "departments"
+                ? "Abrindo a página de Órgãos Responsáveis."
+                : "Abrindo o painel do cidadão."
       setFeedback(msg)
       speak(msg)
     } else {
       const msg =
-        "Não consegui entender o comando. Tente dizer: 'ver painel', 'abrir solicitações' ou 'mostrar notícias'."
+        "Não consegui entender o comando. Tente dizer: 'ver painel', 'abrir solicitações', 'mostrar notícias' ou 'ver órgãos responsáveis'."
       setFeedback(msg)
       speak(msg)
     }
@@ -318,8 +332,8 @@ export function VoiceChatModal({ onNavigate }: VoiceChatModalProps) {
                 "Abrir solicitações",
                 "Ir para agendamentos",
                 "Mostrar notícias",
-                "Buscar vacina",
-                "Procurar saúde",
+                "Ver órgãos",
+                "Quem resolve",
               ].map((example) => (
                 <Button
                   key={example}
