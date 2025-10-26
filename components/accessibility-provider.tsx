@@ -7,8 +7,28 @@ interface AccessibilityContextType {
   toggleHighContrast: () => void
   fontSize: "normal" | "large" | "xlarge"
   setFontSize: (size: "normal" | "large" | "xlarge") => void
-  colorBlindMode: "none" | "grayscale" | "deuteranopia" | "protanopia" | "tritanopia"
-  setColorBlindMode: (mode: "none" | "grayscale" | "deuteranopia" | "protanopia" | "tritanopia") => void
+  colorBlindMode:
+    | "none"
+    | "grayscale"
+    | "deuteranopia"
+    | "protanopia"
+    | "tritanopia"
+    | "deuteranomaly"
+    | "protanomaly"
+    | "tritanomaly"
+    | "achromatomaly"
+  setColorBlindMode: (
+    mode:
+      | "none"
+      | "grayscale"
+      | "deuteranopia"
+      | "protanopia"
+      | "tritanopia"
+      | "deuteranomaly"
+      | "protanomaly"
+      | "tritanomaly"
+      | "achromatomaly",
+  ) => void
   contrastBoost: boolean
   toggleContrastBoost: () => void
   pageZoom: 100 | 125 | 150
@@ -38,7 +58,15 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [highContrast, setHighContrast] = useState(false)
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal")
   const [colorBlindMode, setColorBlindMode] = useState<
-    "none" | "grayscale" | "deuteranopia" | "protanopia" | "tritanopia"
+    | "none"
+    | "grayscale"
+    | "deuteranopia"
+    | "protanopia"
+    | "tritanopia"
+    | "deuteranomaly"
+    | "protanomaly"
+    | "tritanomaly"
+    | "achromatomaly"
   >("none")
   const [contrastBoost, setContrastBoost] = useState(false)
   const [pageZoom, setPageZoom] = useState<100 | 125 | 150>(100)
@@ -56,8 +84,16 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     const savedContrast = localStorage.getItem("highContrast") === "true"
     const savedFontSize = (localStorage.getItem("fontSize") as "normal" | "large" | "xlarge") || "normal"
     const savedColorBlindMode =
-      (localStorage.getItem("colorBlindMode") as "none" | "grayscale" | "deuteranopia" | "protanopia" | "tritanopia") ||
-      "none"
+      (localStorage.getItem("colorBlindMode") as
+        | "none"
+        | "grayscale"
+        | "deuteranopia"
+        | "protanopia"
+        | "tritanopia"
+        | "deuteranomaly"
+        | "protanomaly"
+        | "tritanomaly"
+        | "achromatomaly") || "none"
     const savedContrastBoost = localStorage.getItem("contrastBoost") === "true"
     const savedZoom = (Number.parseInt(localStorage.getItem("pageZoom") || "100", 10) as 100 | 125 | 150) || 100
     const savedDyslexiaFont = localStorage.getItem("dyslexiaFont") === "true"
@@ -108,12 +144,20 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
       "colorblind-deuteranopia",
       "colorblind-protanopia",
       "colorblind-tritanopia",
+      "colorblind-deuteranomaly",
+      "colorblind-protanomaly",
+      "colorblind-tritanomaly",
+      "colorblind-achromatomaly",
     ]
     const paletteClasses = [
       "cb-palette-grayscale",
       "cb-palette-deuteranopia",
       "cb-palette-protanopia",
       "cb-palette-tritanopia",
+      "cb-palette-deuteranomaly",
+      "cb-palette-protanomaly",
+      "cb-palette-tritanomaly",
+      "cb-palette-achromatomaly",
     ]
     cbClasses.forEach((c) => document.documentElement.classList.remove(c))
     paletteClasses.forEach((c) => document.documentElement.classList.remove(c))

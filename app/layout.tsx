@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { AccessibilityProvider } from "@/components/accessibility-provider"
 import { VLibrasScript } from "@/components/vlibras-script"
+import { ColorblindFilters } from "@/components/colorblind-filters"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="font-sans antialiased">
+        <ColorblindFilters />
         <div className="app-filter-root pt-0 min-h-screen flex flex-col">
           <AccessibilityProvider>{children}</AccessibilityProvider>
           <Analytics />

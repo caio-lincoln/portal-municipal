@@ -230,17 +230,32 @@ export function AccessibilityModal() {
                 <Palette className="h-5 w-5 text-primary" />
                 <Label className="text-base font-semibold">Modo Daltonismo</Label>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Ajusta as cores para diferentes tipos de daltonismo usando filtros cientificamente precisos
+              </p>
               <RadioGroup
                 value={colorBlindMode}
                 onValueChange={(v) => setColorBlindMode(v as any)}
                 className="space-y-2"
               >
                 {[
-                  { value: "none", label: "Nenhum", desc: "Cores padrão" },
-                  { value: "grayscale", label: "Escala de Cinza", desc: "Remove todas as cores" },
-                  { value: "deuteranopia", label: "Deuteranopia", desc: "Dificuldade com verde" },
-                  { value: "protanopia", label: "Protanopia", desc: "Dificuldade com vermelho" },
-                  { value: "tritanopia", label: "Tritanopia", desc: "Dificuldade com azul" },
+                  { value: "none", label: "Nenhum", desc: "Cores padrão do sistema" },
+                  {
+                    value: "grayscale",
+                    label: "Acromatopsia",
+                    desc: "Visão em escala de cinza (cegueira total de cores)",
+                  },
+                  {
+                    value: "achromatomaly",
+                    label: "Acromatopsia Parcial",
+                    desc: "Dificuldade severa com todas as cores",
+                  },
+                  { value: "deuteranopia", label: "Deuteranopia", desc: "Cegueira ao verde (6% dos homens)" },
+                  { value: "deuteranomaly", label: "Deuteranomalia", desc: "Dificuldade com verde (mais comum)" },
+                  { value: "protanopia", label: "Protanopia", desc: "Cegueira ao vermelho (1% dos homens)" },
+                  { value: "protanomaly", label: "Protanomalia", desc: "Dificuldade com vermelho" },
+                  { value: "tritanopia", label: "Tritanopia", desc: "Cegueira ao azul (muito raro)" },
+                  { value: "tritanomaly", label: "Tritanomalia", desc: "Dificuldade com azul (raro)" },
                 ].map((mode) => (
                   <div key={mode.value}>
                     <RadioGroupItem value={mode.value} id={`cb-${mode.value}`} className="peer sr-only" />
@@ -248,11 +263,15 @@ export function AccessibilityModal() {
                       htmlFor={`cb-${mode.value}`}
                       className="flex items-center justify-between rounded-lg border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
                     >
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium">{mode.label}</div>
                         <div className="text-sm text-muted-foreground">{mode.desc}</div>
                       </div>
-                      <div className="h-6 w-6 rounded-full border-2 peer-data-[state=checked]:border-primary" />
+                      <div className="flex gap-1 ml-4">
+                        <div className="h-4 w-4 rounded-full bg-red-500" />
+                        <div className="h-4 w-4 rounded-full bg-green-500" />
+                        <div className="h-4 w-4 rounded-full bg-blue-500" />
+                      </div>
                     </Label>
                   </div>
                 ))}

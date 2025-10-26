@@ -147,6 +147,70 @@ html.contrast-boost {
   --contrast-filter: contrast(1.25);
 }
 
+/* Enhanced colorblind mode filters using accurate SVG color matrices */
+html.colorblind-grayscale body {
+  filter: url(#achromatopsia) var(--contrast-filter) !important;
+}
+
+html.colorblind-deuteranopia body {
+  filter: url(#deuteranopia) var(--contrast-filter) !important;
+}
+
+html.colorblind-protanopia body {
+  filter: url(#protanopia) var(--contrast-filter) !important;
+}
+
+html.colorblind-tritanopia body {
+  filter: url(#tritanopia) var(--contrast-filter) !important;
+}
+
+html.colorblind-deuteranomaly body {
+  filter: url(#deuteranomaly) var(--contrast-filter) !important;
+}
+
+html.colorblind-protanomaly body {
+  filter: url(#protanomaly) var(--contrast-filter) !important;
+}
+
+html.colorblind-tritanomaly body {
+  filter: url(#tritanomaly) var(--contrast-filter) !important;
+}
+
+html.colorblind-achromatomaly body {
+  filter: url(#achromatomaly) var(--contrast-filter) !important;
+}
+
+/* Enhanced color palette adjustments for better visibility in colorblind modes */
+html.cb-palette-deuteranopia {
+  --primary: oklch(0.45 0.15 260);
+  --chart-1: oklch(0.45 0.15 260);
+  --chart-2: oklch(0.6 0.12 60);
+  --destructive: oklch(0.5 0.2 60);
+}
+
+html.cb-palette-protanopia {
+  --primary: oklch(0.45 0.15 240);
+  --chart-1: oklch(0.45 0.15 240);
+  --chart-2: oklch(0.6 0.12 80);
+  --destructive: oklch(0.5 0.2 80);
+}
+
+html.cb-palette-tritanopia {
+  --primary: oklch(0.5 0.15 340);
+  --chart-1: oklch(0.5 0.15 340);
+  --chart-2: oklch(0.6 0.12 20);
+  --destructive: oklch(0.55 0.2 20);
+}
+
+html.cb-palette-grayscale {
+  --primary: oklch(0.4 0 0);
+  --chart-1: oklch(0.3 0 0);
+  --chart-2: oklch(0.5 0 0);
+  --chart-3: oklch(0.6 0 0);
+  --chart-4: oklch(0.7 0 0);
+  --chart-5: oklch(0.8 0 0);
+}
+
 html.colorblind-grayscale {
   --cb-filter: grayscale(1);
 }
