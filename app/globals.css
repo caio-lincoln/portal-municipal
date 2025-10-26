@@ -147,36 +147,37 @@ html.contrast-boost {
   --contrast-filter: contrast(1.25);
 }
 
+/* Apply colorblind filters to root element to affect header, footer, and all content */
 /* Enhanced colorblind mode filters using accurate SVG color matrices */
-html.colorblind-grayscale body {
+html.colorblind-grayscale {
   filter: url(#achromatopsia) var(--contrast-filter) !important;
 }
 
-html.colorblind-deuteranopia body {
+html.colorblind-deuteranopia {
   filter: url(#deuteranopia) var(--contrast-filter) !important;
 }
 
-html.colorblind-protanopia body {
+html.colorblind-protanopia {
   filter: url(#protanopia) var(--contrast-filter) !important;
 }
 
-html.colorblind-tritanopia body {
+html.colorblind-tritanopia {
   filter: url(#tritanopia) var(--contrast-filter) !important;
 }
 
-html.colorblind-deuteranomaly body {
+html.colorblind-deuteranomaly {
   filter: url(#deuteranomaly) var(--contrast-filter) !important;
 }
 
-html.colorblind-protanomaly body {
+html.colorblind-protanomaly {
   filter: url(#protanomaly) var(--contrast-filter) !important;
 }
 
-html.colorblind-tritanomaly body {
+html.colorblind-tritanomaly {
   filter: url(#tritanomaly) var(--contrast-filter) !important;
 }
 
-html.colorblind-achromatomaly body {
+html.colorblind-achromatomaly {
   filter: url(#achromatomaly) var(--contrast-filter) !important;
 }
 
@@ -224,10 +225,8 @@ html.colorblind-tritanopia {
   --cb-filter: saturate(0.6) hue-rotate(180deg);
 }
 
-/* Combine filters so they can stack */
-body {
-  filter: var(--cb-filter) var(--contrast-filter);
-}
+/* Remove body filter since we're applying to html element now */
+/* Combine filters so they can stack - removed body filter */
 .app-filter-root {
   filter: var(--cb-filter) var(--contrast-filter);
 }
