@@ -155,8 +155,8 @@ export function News() {
               {newsItems.map((news) => (
                 <Card key={news.id} className="hover:shadow-lg transition-shadow border-l-4 border-blue-700">
                   <CardContent className="p-0">
-                    <div className="grid md:grid-cols-[200px_1fr] gap-4">
-                      <div className="relative h-48 md:h-full bg-muted rounded-l-lg overflow-hidden">
+                    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4">
+                      <div className="relative h-48 md:h-full bg-muted rounded-t-lg md:rounded-l-lg overflow-hidden">
                         <img
                           src={news.image || "/placeholder.svg"}
                           alt={news.title}

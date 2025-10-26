@@ -28,10 +28,10 @@ export function Header({
   return (
     <>
       <header className="sticky top-0 z-50 bg-white shadow-lg border-b">
-        <div className="flex items-center justify-between px-6 h-20 max-w-7xl mx-auto w-full">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+        <div className="flex flex-col md:flex-row items-center justify-between px-4 md:px-6 h-auto md:h-20 max-w-7xl mx-auto w-full gap-2 md:gap-0">
+          <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                 <img
                   src="Logo.jpeg"
                   alt="Logo GuiaGov"
@@ -39,12 +39,12 @@ export function Header({
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-blue-900">GuiaGov</h1>
-                <span className="inline-block px-2 py-1 rounded bg-blue-50 text-xs font-semibold ml-2 text-blue-700">Portal do Cidadão</span>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-blue-900">GuiaGov</h1>
+                <span className="inline-block px-2 py-1 rounded bg-blue-50 text-xs md:text-sm font-semibold ml-2 text-blue-700">Portal do Cidadão</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2 md:mt-0">
             <Button
               variant="ghost"
               size="icon"
@@ -61,9 +61,9 @@ export function Header({
             </Button>
           </div>
         </div>
-        <nav className="bg-gradient-to-r from-blue-700 to-indigo-700 py-2 px-6">
-          {/* Centraliza os botões do menu */}
-          <div className="max-w-7xl mx-auto flex items-center gap-2 justify-center">
+        <nav className="bg-gradient-to-r from-blue-700 to-indigo-700 py-2 px-2 md:px-6">
+          {/* Centraliza e permite scroll horizontal no mobile */}
+          <div className="max-w-7xl mx-auto flex items-center gap-2 justify-center overflow-x-auto scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = currentPage === item.id
@@ -71,7 +71,7 @@ export function Header({
                 <Button
                   key={item.id}
                   variant={isActive ? "default" : "outline"}
-                  className={`flex items-center gap-2 rounded-full px-5 py-2 font-semibold text-base transition-all ${
+                  className={`flex items-center gap-2 rounded-full px-4 md:px-5 py-2 font-semibold text-base md:text-base text-sm transition-all ${
                     isActive
                       ? "bg-white text-blue-700 shadow"
                       : "bg-blue-700 text-white hover:bg-blue-800"

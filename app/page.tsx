@@ -19,7 +19,7 @@ export default function Home() {
         currentPage={currentPage}
         onNavigate={setCurrentPage}
       />
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2 sm:px-4 py-4 sm:py-8">
         {currentPage === "dashboard" && <Dashboard onNavigate={setCurrentPage} />}
         {currentPage === "services" && <ServiceRequests />}
         {currentPage === "appointments" && <Appointments />}

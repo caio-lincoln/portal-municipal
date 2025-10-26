@@ -355,3 +355,12 @@ a,
 [data-slot="drawer-trigger"] {
   cursor: pointer;
 }
+
+/* Esconde scrollbar horizontal em menus roláveis */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

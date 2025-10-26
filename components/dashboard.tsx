@@ -78,7 +78,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <p className="text-lg text-blue-700">Acompanhe indicadores, serviços e notícias da Prefeitura de Aracaju</p>
       </section>
 
-      <section className="grid gap-8 md:grid-cols-3">
+      <section className="grid gap-8 grid-cols-1 md:grid-cols-3">
         {/* Cards informativos */}
         <Card className="hover:shadow-md transition-all border-l-4 border-l-primary">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -120,7 +120,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Card>
       </section>
 
-      <section className="grid gap-8 lg:grid-cols-2">
+      <section className="grid gap-8 grid-cols-1 lg:grid-cols-2">
         {/* Cards de solicitações e agendamentos */}
         <Card className="shadow-sm">
           <CardHeader className="pb-4">
