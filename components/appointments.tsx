@@ -9,12 +9,23 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Clock, MapPin, Plus, User } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAccessibility } from "@/components/accessibility-provider"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export function Appointments() {
   const [showNewAppointment, setShowNewAppointment] = useState(false)
   const { speak } = useAccessibility()
 
-  const appointments = [
+  type Appointment = {
+    id: string
+    service: string
+    department: string
+    date: string
+    time: string
+    location: string
+    status: string
+  }
+
+  const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: "A001",
       service: "Atendimento - Secretaria de Saúde",
@@ -42,7 +53,7 @@ export function Appointments() {
       location: "CRAS - Bairro Industrial",
       status: "Concluído",
     },
-  ]
+  ])
 
   const availableServices = [
     { value: "health", label: "Atendimento - Secretaria de Saúde", department: "Secretaria de Saúde" },
@@ -64,6 +75,24 @@ export function Appointments() {
         return "outline"
     }
   }
+
+  // Helpers para formato de data
+  const toInputDate = (displayDate: string) => {
+    // de DD/MM/YYYY para YYYY-MM-DD
+    const [d, m, y] = displayDate.split("/")
+    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`
+  }
+
+  const formatDateDisplay = (inputDate: string) => {
+    // de YYYY-MM-DD para DD/MM/YYYY
+    const [y, m, d] = inputDate.split("-")
+    return `${d.padStart(2, "0")}/${m.padStart(2, "0")}/${y}`
+  }
+
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false)
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [rescheduleDate, setRescheduleDate] = useState("")
+  const [rescheduleTime, setRescheduleTime] = useState("")
 
   return (
     <div className="space-y-10">
@@ -150,9 +179,7 @@ export function Appointments() {
 
               <div className="flex gap-2">
                 <Button type="submit">Confirmar Agendamento</Button>
-                <Button type="button" variant="outline" onClick={() => setShowNewAppointment(false)}>
-                  Cancelar
-                </Button>
+                {/* Botão Cancelar removido conforme solicitado */}
               </div>
             </form>
           </CardContent>
@@ -196,12 +223,20 @@ export function Appointments() {
                       </div>
 
                       <div className="flex gap-2 pt-2">
-                        <Button variant="outline" size="sm" className="flex-1 bg-transparent">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 bg-transparent"
+                          onClick={() => {
+                            setSelectedAppointment(appointment)
+                            setIsRescheduleOpen(true)
+                            setRescheduleDate(toInputDate(appointment.date))
+                            setRescheduleTime(appointment.time)
+                          }}
+                        >
                           Reagendar
                         </Button>
-                        <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                          Cancelar
-                        </Button>
+                        {/* Botão Cancelar removido conforme solicitado */}
                       </div>
                     </div>
                   </CardContent>
@@ -247,6 +282,86 @@ export function Appointments() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog de Reagendar */}
+      <Dialog
+        open={isRescheduleOpen}
+        onOpenChange={(open) => {
+          setIsRescheduleOpen(open)
+          if (!open) setSelectedAppointment(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reagendar Agendamento</DialogTitle>
+          </DialogHeader>
+
+          {selectedAppointment && (
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const newDateDisplay = formatDateDisplay(rescheduleDate)
+                setAppointments((prev) =>
+                  prev.map((apt) =>
+                    apt.id === selectedAppointment.id
+                      ? { ...apt, date: newDateDisplay, time: rescheduleTime }
+                      : apt,
+                  ),
+                )
+                speak(
+                  `Agendamento ${selectedAppointment.id} reagendado para ${newDateDisplay} às ${rescheduleTime}`,
+                )
+                setIsRescheduleOpen(false)
+                setSelectedAppointment(null)
+              }}
+            >
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {selectedAppointment.service} — {selectedAppointment.department}
+                </p>
+                <p className="text-sm">Atual: {selectedAppointment.date} às {selectedAppointment.time}</p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="rescheduleDate">Nova Data</Label>
+                  <Input
+                    id="rescheduleDate"
+                    type="date"
+                    value={rescheduleDate}
+                    onChange={(e) => setRescheduleDate(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rescheduleTime">Novo Horário</Label>
+                  <Select value={rescheduleTime} onValueChange={setRescheduleTime}>
+                    <SelectTrigger id="rescheduleTime">
+                      <SelectValue placeholder="Selecione o horário" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="09:00">09:00</SelectItem>
+                      <SelectItem value="10:00">10:00</SelectItem>
+                      <SelectItem value="11:00">11:00</SelectItem>
+                      <SelectItem value="14:00">14:00</SelectItem>
+                      <SelectItem value="15:00">15:00</SelectItem>
+                      <SelectItem value="16:00">16:00</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="submit">Confirmar Reagendamento</Button>
+                <Button type="button" variant="outline" onClick={() => setIsRescheduleOpen(false)}>
+                  Fechar
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>
