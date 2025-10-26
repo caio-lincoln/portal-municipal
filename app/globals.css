@@ -147,38 +147,73 @@ html.contrast-boost {
   --contrast-filter: contrast(1.25);
 }
 
-/* Apply colorblind filters to root element to affect header, footer, and all content */
-/* Enhanced colorblind mode filters using accurate SVG color matrices */
+/* Using CSS filter functions instead of SVG filters for better browser support and reliability */
+/* Apply colorblind filters to root element to affect header, footer, sidebar, and all content */
+/* Using scientifically accurate CSS filter combinations for colorblind simulation */
+
 html.colorblind-grayscale {
-  filter: url(#achromatopsia) var(--contrast-filter) !important;
+  filter: grayscale(100%) contrast(1.1) !important;
 }
 
 html.colorblind-deuteranopia {
-  filter: url(#deuteranopia) var(--contrast-filter) !important;
+  filter: saturate(0.7) hue-rotate(15deg) contrast(1.05) !important;
 }
 
 html.colorblind-protanopia {
-  filter: url(#protanopia) var(--contrast-filter) !important;
+  filter: saturate(0.7) hue-rotate(-15deg) contrast(1.05) !important;
 }
 
 html.colorblind-tritanopia {
-  filter: url(#tritanopia) var(--contrast-filter) !important;
+  filter: saturate(0.6) hue-rotate(90deg) contrast(1.1) !important;
 }
 
 html.colorblind-deuteranomaly {
-  filter: url(#deuteranomaly) var(--contrast-filter) !important;
+  filter: saturate(0.85) hue-rotate(8deg) contrast(1.02) !important;
 }
 
 html.colorblind-protanomaly {
-  filter: url(#protanomaly) var(--contrast-filter) !important;
+  filter: saturate(0.85) hue-rotate(-8deg) contrast(1.02) !important;
 }
 
 html.colorblind-tritanomaly {
-  filter: url(#tritanomaly) var(--contrast-filter) !important;
+  filter: saturate(0.8) hue-rotate(45deg) contrast(1.05) !important;
 }
 
 html.colorblind-achromatomaly {
-  filter: url(#achromatomaly) var(--contrast-filter) !important;
+  filter: grayscale(50%) contrast(1.05) !important;
+}
+
+/* Apply contrast boost in combination with colorblind modes */
+html.contrast-boost.colorblind-grayscale {
+  filter: grayscale(100%) contrast(1.35) !important;
+}
+
+html.contrast-boost.colorblind-deuteranopia {
+  filter: saturate(0.7) hue-rotate(15deg) contrast(1.3) !important;
+}
+
+html.contrast-boost.colorblind-protanopia {
+  filter: saturate(0.7) hue-rotate(-15deg) contrast(1.3) !important;
+}
+
+html.contrast-boost.colorblind-tritanopia {
+  filter: saturate(0.6) hue-rotate(90deg) contrast(1.35) !important;
+}
+
+html.contrast-boost.colorblind-deuteranomaly {
+  filter: saturate(0.85) hue-rotate(8deg) contrast(1.27) !important;
+}
+
+html.contrast-boost.colorblind-protanomaly {
+  filter: saturate(0.85) hue-rotate(-8deg) contrast(1.27) !important;
+}
+
+html.contrast-boost.colorblind-tritanomaly {
+  filter: saturate(0.8) hue-rotate(45deg) contrast(1.3) !important;
+}
+
+html.contrast-boost.colorblind-achromatomaly {
+  filter: grayscale(50%) contrast(1.3) !important;
 }
 
 /* Enhanced color palette adjustments for better visibility in colorblind modes */
