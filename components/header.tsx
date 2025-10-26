@@ -63,8 +63,8 @@ export function Header({
             </Button>
           </div>
         </div>
-        <nav className="bg-gradient-to-r from-blue-700 to-indigo-700 py-2 px-2 sm:px-4 md:px-6">
-          <div className="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-2 justify-start md:justify-center overflow-x-auto scrollbar-hide pb-1">
+        <nav className="bg-gradient-to-r from-blue-700 to-indigo-700 py-2 sm:py-3 px-2 sm:px-4 md:px-6">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-2.5 md:gap-3 justify-center overflow-x-auto scrollbar-hide pb-1">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = currentPage === item.id
@@ -72,14 +72,17 @@ export function Header({
                 <Button
                   key={item.id}
                   variant={isActive ? "default" : "outline"}
-                  className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3 sm:px-4 md:px-5 py-2 font-semibold text-xs sm:text-sm md:text-base transition-all whitespace-nowrap flex-shrink-0 ${
-                    isActive ? "bg-white text-blue-700 shadow" : "bg-blue-700 text-white hover:bg-blue-800"
+                  className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 font-semibold text-xs sm:text-sm md:text-base transition-all whitespace-nowrap flex-shrink-0 min-h-[44px] ${
+                    isActive
+                      ? "bg-white text-blue-700 shadow-md"
+                      : "bg-blue-700 text-white hover:bg-blue-800 border-white/20"
                   }`}
                   onClick={() => onNavigate(item.id as NavPage)}
                   aria-current={isActive ? "page" : undefined}
+                  aria-label={item.label}
                 >
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="hidden xs:inline">{item.label}</span>
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                  <span>{item.label}</span>
                 </Button>
               )
             })}

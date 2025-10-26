@@ -216,7 +216,7 @@ export function VoiceChatModal({ onNavigate }: VoiceChatModalProps) {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="fixed bottom-[88px] right-4 sm:right-6 z-40 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-300 hover:scale-110 border-2 border-blue-400/30"
+          className="fixed bottom-[104px] right-4 sm:right-6 z-40 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-300 hover:scale-110 border-2 border-blue-400/30"
           aria-label="Abrir chat por voz"
         >
           <MessageSquare className="h-6 w-6" />

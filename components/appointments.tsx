@@ -9,23 +9,12 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Clock, MapPin, Plus, User } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAccessibility } from "@/components/accessibility-provider"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export function Appointments() {
   const [showNewAppointment, setShowNewAppointment] = useState(false)
   const { speak } = useAccessibility()
 
-  type Appointment = {
-    id: string
-    service: string
-    department: string
-    date: string
-    time: string
-    location: string
-    status: string
-  }
-
-  const [appointments, setAppointments] = useState<Appointment[]>([
+  const appointments = [
     {
       id: "A001",
       service: "Atendimento - Secretaria de Saúde",
@@ -53,7 +42,7 @@ export function Appointments() {
       location: "CRAS - Bairro Industrial",
       status: "Concluído",
     },
-  ])
+  ]
 
   const availableServices = [
     { value: "health", label: "Atendimento - Secretaria de Saúde", department: "Secretaria de Saúde" },
@@ -76,32 +65,18 @@ export function Appointments() {
     }
   }
 
-  // Helpers para formato de data
-  const toInputDate = (displayDate: string) => {
-    // de DD/MM/YYYY para YYYY-MM-DD
-    const [d, m, y] = displayDate.split("/")
-    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`
-  }
-
-  const formatDateDisplay = (inputDate: string) => {
-    // de YYYY-MM-DD para DD/MM/YYYY
-    const [y, m, d] = inputDate.split("-")
-    return `${d.padStart(2, "0")}/${m.padStart(2, "0")}/${y}`
-  }
-
-  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false)
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
-  const [rescheduleDate, setRescheduleDate] = useState("")
-  const [rescheduleTime, setRescheduleTime] = useState("")
-
   return (
-    <div className="space-y-10">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 sm:space-y-8 lg:space-y-10 px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Agendamentos</h1>
-          <p className="text-muted-foreground">Agende atendimentos e consulte seus compromissos</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Agendamentos</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Agende atendimentos e consulte seus compromissos</p>
         </div>
-        <Button onClick={() => setShowNewAppointment(!showNewAppointment)} aria-label="Novo agendamento">
+        <Button
+          onClick={() => setShowNewAppointment(!showNewAppointment)}
+          aria-label="Novo agendamento"
+          className="w-full sm:w-auto min-h-[44px]"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Novo Agendamento
         </Button>
@@ -109,11 +84,13 @@ export function Appointments() {
 
       {showNewAppointment && (
         <Card className="border-l-4 border-blue-700">
-          <CardHeader>
-            <CardTitle>Novo Agendamento</CardTitle>
-            <CardDescription>Selecione o serviço e escolha data e horário disponíveis</CardDescription>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">Novo Agendamento</CardTitle>
+            <CardDescription className="text-sm">
+              Selecione o serviço e escolha data e horário disponíveis
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             <form
               className="space-y-4"
               onSubmit={(e) => {
@@ -123,9 +100,11 @@ export function Appointments() {
               }}
             >
               <div className="space-y-2">
-                <Label htmlFor="service">Serviço</Label>
+                <Label htmlFor="service" className="text-sm sm:text-base">
+                  Serviço
+                </Label>
                 <Select>
-                  <SelectTrigger id="service">
+                  <SelectTrigger id="service" className="min-h-[44px] text-base">
                     <SelectValue placeholder="Selecione o serviço" />
                   </SelectTrigger>
                   <SelectContent>
@@ -138,16 +117,20 @@ export function Appointments() {
                 </Select>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="date">Data</Label>
-                  <Input id="date" type="date" />
+                  <Label htmlFor="date" className="text-sm sm:text-base">
+                    Data
+                  </Label>
+                  <Input id="date" type="date" className="min-h-[44px] text-base" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="time">Horário</Label>
+                  <Label htmlFor="time" className="text-sm sm:text-base">
+                    Horário
+                  </Label>
                   <Select>
-                    <SelectTrigger id="time">
+                    <SelectTrigger id="time" className="min-h-[44px] text-base">
                       <SelectValue placeholder="Selecione o horário" />
                     </SelectTrigger>
                     <SelectContent>
@@ -163,80 +146,89 @@ export function Appointments() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome Completo</Label>
-                <Input id="name" placeholder="Seu nome completo" />
+                <Label htmlFor="name" className="text-sm sm:text-base">
+                  Nome Completo
+                </Label>
+                <Input id="name" placeholder="Seu nome completo" className="min-h-[44px] text-base" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cpf">CPF</Label>
-                <Input id="cpf" placeholder="000.000.000-00" />
+                <Label htmlFor="cpf" className="text-sm sm:text-base">
+                  CPF
+                </Label>
+                <Input id="cpf" placeholder="000.000.000-00" className="min-h-[44px] text-base" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone</Label>
-                <Input id="phone" placeholder="(79) 00000-0000" />
+                <Label htmlFor="phone" className="text-sm sm:text-base">
+                  Telefone
+                </Label>
+                <Input id="phone" placeholder="(79) 00000-0000" className="min-h-[44px] text-base" />
               </div>
 
-              <div className="flex gap-2">
-                <Button type="submit">Confirmar Agendamento</Button>
-                {/* Botão Cancelar removido conforme solicitado */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button type="submit" className="w-full sm:w-auto min-h-[44px]">
+                  Confirmar Agendamento
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowNewAppointment(false)}
+                  className="w-full sm:w-auto min-h-[44px]"
+                >
+                  Cancelar
+                </Button>
               </div>
             </form>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Próximos Agendamentos</CardTitle>
-            <CardDescription>Seus compromissos confirmados</CardDescription>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">Próximos Agendamentos</CardTitle>
+            <CardDescription className="text-sm">Seus compromissos confirmados</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-4 sm:px-6">
             {appointments
               .filter((apt) => apt.status === "Confirmado")
               .map((appointment) => (
                 <Card key={appointment.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 sm:p-4">
                     <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold">{appointment.service}</h3>
-                          <p className="text-sm text-muted-foreground">{appointment.department}</p>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.department}</p>
                         </div>
-                        <Badge variant={getStatusVariant(appointment.status)}>{appointment.status}</Badge>
+                        <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
+                          {appointment.status}
+                        </Badge>
                       </div>
 
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-2 text-xs sm:text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <CalendarIcon className="h-4 w-4" />
+                          <CalendarIcon className="h-4 w-4 shrink-0" />
                           <span>{appointment.date}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-4 w-4 shrink-0" />
                           <span>{appointment.time}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="h-4 w-4" />
-                          <span>{appointment.location}</span>
+                          <MapPin className="h-4 w-4 shrink-0" />
+                          <span className="break-words">{appointment.location}</span>
                         </div>
                       </div>
 
-                      <div className="flex gap-2 pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 bg-transparent"
-                          onClick={() => {
-                            setSelectedAppointment(appointment)
-                            setIsRescheduleOpen(true)
-                            setRescheduleDate(toInputDate(appointment.date))
-                            setRescheduleTime(appointment.time)
-                          }}
-                        >
+                      <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                        <Button variant="outline" size="sm" className="w-full sm:flex-1 bg-transparent min-h-[40px]">
                           Reagendar
                         </Button>
-                        {/* Botão Cancelar removido conforme solicitado */}
+                        <Button variant="outline" size="sm" className="w-full sm:flex-1 bg-transparent min-h-[40px]">
+                          Cancelar
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -246,32 +238,34 @@ export function Appointments() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Histórico de Agendamentos</CardTitle>
-            <CardDescription>Agendamentos anteriores</CardDescription>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">Histórico de Agendamentos</CardTitle>
+            <CardDescription className="text-sm">Agendamentos anteriores</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-4 sm:px-6">
             {appointments
               .filter((apt) => apt.status === "Concluído")
               .map((appointment) => (
                 <Card key={appointment.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 sm:p-4">
                     <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold">{appointment.service}</h3>
-                          <p className="text-sm text-muted-foreground">{appointment.department}</p>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-sm sm:text-base truncate">{appointment.service}</h3>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{appointment.department}</p>
                         </div>
-                        <Badge variant={getStatusVariant(appointment.status)}>{appointment.status}</Badge>
+                        <Badge variant={getStatusVariant(appointment.status)} className="shrink-0 text-xs">
+                          {appointment.status}
+                        </Badge>
                       </div>
 
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-2 text-xs sm:text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <CalendarIcon className="h-4 w-4" />
+                          <CalendarIcon className="h-4 w-4 shrink-0" />
                           <span>{appointment.date}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-4 w-4 shrink-0" />
                           <span>{appointment.time}</span>
                         </div>
                       </div>
@@ -283,103 +277,23 @@ export function Appointments() {
         </Card>
       </div>
 
-      {/* Dialog de Reagendar */}
-      <Dialog
-        open={isRescheduleOpen}
-        onOpenChange={(open) => {
-          setIsRescheduleOpen(open)
-          if (!open) setSelectedAppointment(null)
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reagendar Agendamento</DialogTitle>
-          </DialogHeader>
-
-          {selectedAppointment && (
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault()
-                const newDateDisplay = formatDateDisplay(rescheduleDate)
-                setAppointments((prev) =>
-                  prev.map((apt) =>
-                    apt.id === selectedAppointment.id
-                      ? { ...apt, date: newDateDisplay, time: rescheduleTime }
-                      : apt,
-                  ),
-                )
-                speak(
-                  `Agendamento ${selectedAppointment.id} reagendado para ${newDateDisplay} às ${rescheduleTime}`,
-                )
-                setIsRescheduleOpen(false)
-                setSelectedAppointment(null)
-              }}
-            >
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {selectedAppointment.service} — {selectedAppointment.department}
-                </p>
-                <p className="text-sm">Atual: {selectedAppointment.date} às {selectedAppointment.time}</p>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="rescheduleDate">Nova Data</Label>
-                  <Input
-                    id="rescheduleDate"
-                    type="date"
-                    value={rescheduleDate}
-                    onChange={(e) => setRescheduleDate(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="rescheduleTime">Novo Horário</Label>
-                  <Select value={rescheduleTime} onValueChange={setRescheduleTime}>
-                    <SelectTrigger id="rescheduleTime">
-                      <SelectValue placeholder="Selecione o horário" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="09:00">09:00</SelectItem>
-                      <SelectItem value="10:00">10:00</SelectItem>
-                      <SelectItem value="11:00">11:00</SelectItem>
-                      <SelectItem value="14:00">14:00</SelectItem>
-                      <SelectItem value="15:00">15:00</SelectItem>
-                      <SelectItem value="16:00">16:00</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button type="submit">Confirmar Reagendamento</Button>
-                <Button type="button" variant="outline" onClick={() => setIsRescheduleOpen(false)}>
-                  Fechar
-                </Button>
-              </div>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-
       <Card>
-        <CardHeader>
-          <CardTitle>Serviços Disponíveis</CardTitle>
-          <CardDescription>Conheça os serviços que você pode agendar</CardDescription>
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl">Serviços Disponíveis</CardTitle>
+          <CardDescription className="text-sm">Conheça os serviços que você pode agendar</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <CardContent className="px-4 sm:px-6">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {availableServices.map((service) => (
               <Card key={service.value} className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <User className="h-5 w-5 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                      <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm mb-1">{service.label}</h4>
-                      <p className="text-xs text-muted-foreground">{service.department}</p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-xs sm:text-sm mb-1 break-words">{service.label}</h4>
+                      <p className="text-xs text-muted-foreground break-words">{service.department}</p>
                     </div>
                   </div>
                 </CardContent>

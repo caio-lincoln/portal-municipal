@@ -49,7 +49,7 @@ export function LibrasButton() {
     <Button
       onClick={handleLibrasClick}
       size="lg"
-      className="fixed bottom-[152px] right-4 sm:right-6 z-40 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-300 hover:scale-110 border-2 border-purple-400/30 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="fixed bottom-[184px] right-4 sm:right-6 z-40 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-300 hover:scale-110 border-2 border-purple-400/30 disabled:opacity-50 disabled:cursor-not-allowed"
       aria-label="Tradutor de LIBRAS"
       disabled={!isLoaded}
       title={isLoaded ? "Ativar tradutor de LIBRAS" : "Carregando tradutor..."}
