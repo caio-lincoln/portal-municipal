@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, Calendar, Tag, ExternalLink, Volume2 } from "lucide-react"
 import { useAccessibility } from "@/components/accessibility-provider"
+import Link from "next/link"
+import { newsItems } from "@/lib/news"
 
 export function News() {
   const { speak } = useAccessibility()
@@ -172,9 +174,11 @@ export function News() {
                         <h3 className="text-xl font-semibold mb-2 text-balance">{news.title}</h3>
                         <p className="text-muted-foreground mb-4 text-pretty">{news.excerpt}</p>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm">
-                            Ler mais
-                            <ExternalLink className="ml-2 h-4 w-4" />
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/noticias/${news.id}`} aria-label={`Ler mais sobre ${news.title}`}>
+                              Ler mais
+                              <ExternalLink className="ml-2 h-4 w-4" />
+                            </Link>
                           </Button>
                           <Button
                             variant="ghost"
