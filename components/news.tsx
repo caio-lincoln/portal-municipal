@@ -97,16 +97,16 @@ export function News() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Notícias e Avisos</h1>
+    <div className="space-y-10">
+      <section className="text-center">
+        <h1 className="text-3xl font-bold text-blue-900 mb-2">Notícias e Avisos</h1>
         <p className="text-muted-foreground">Fique por dentro das novidades e comunicados da prefeitura</p>
-      </div>
+      </section>
 
-      <Card className="bg-primary text-primary-foreground">
+      <Card className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-primary-foreground/10 rounded-lg">
+            <div className="p-3 bg-white/10 rounded-lg">
               <Tag className="h-6 w-6" />
             </div>
             <div className="flex-1">
@@ -115,7 +115,7 @@ export function News() {
                 {announcements.map((announcement) => (
                   <div
                     key={announcement.id}
-                    className="flex items-center justify-between py-2 border-b border-primary-foreground/20 last:border-0"
+                    className="flex items-center justify-between py-2 border-b border-white/20 last:border-0"
                   >
                     <div className="flex-1">
                       <p className="font-medium">{announcement.title}</p>
@@ -153,7 +153,7 @@ export function News() {
 
             <TabsContent value="all" className="space-y-6">
               {newsItems.map((news) => (
-                <Card key={news.id} className="hover:shadow-lg transition-shadow">
+                <Card key={news.id} className="hover:shadow-lg transition-shadow border-l-4 border-blue-700">
                   <CardContent className="p-0">
                     <div className="grid md:grid-cols-[200px_1fr] gap-4">
                       <div className="relative h-48 md:h-full bg-muted rounded-l-lg overflow-hidden">

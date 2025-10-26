@@ -23,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`font-sans antialiased`}>
-        <div className="app-filter-root">
+      <body className="font-sans antialiased">
+        <div className="app-filter-root pt-0 min-h-screen flex flex-col">
           <AccessibilityProvider>
             {/* <FloatingAccessibility /> */}
             {children}

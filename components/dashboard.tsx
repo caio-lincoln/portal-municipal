@@ -72,15 +72,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold text-foreground mb-3 tracking-tight">Bem-vindo ao Portal do Cidadão</h1>
-        <p className="text-lg text-muted-foreground">
-          Acesse seus serviços, agendamentos e acompanhe suas solicitações
-        </p>
-      </div>
+    <div className="space-y-10">
+      <section className="mb-6 text-center">
+        <h1 className="text-4xl font-bold text-blue-900 mb-2 tracking-tight">Portal do Cidadão</h1>
+        <p className="text-lg text-blue-700">Acompanhe indicadores, serviços e notícias da Prefeitura de Aracaju</p>
+      </section>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <section className="grid gap-8 md:grid-cols-3">
+        {/* Cards informativos */}
         <Card className="hover:shadow-md transition-all border-l-4 border-l-primary">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">Solicitações Ativas</CardTitle>
@@ -119,9 +118,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <p className="text-sm text-muted-foreground mt-1">2 não lidas</p>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <section className="grid gap-8 lg:grid-cols-2">
+        {/* Cards de solicitações e agendamentos */}
         <Card className="shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -212,44 +212,47 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">Notificações Recentes</CardTitle>
-              <CardDescription className="mt-1.5">Atualizações e lembretes importantes</CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate("news")} className="gap-2">
-              Ver todas
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="flex items-start gap-4 p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors cursor-pointer"
-                role="article"
-                aria-label={notification.title}
-                onClick={() => speak(`${notification.title}. ${notification.message}`)}
-              >
-                <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
-                  <Bell className="h-5 w-5 text-chart-3" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium mb-1">{notification.title}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{notification.message}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{notification.time}</p>
-                </div>
+      <section>
+        {/* Card de notificações */}
+        <Card className="shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl">Notificações Recentes</CardTitle>
+                <CardDescription className="mt-1.5">Atualizações e lembretes importantes</CardDescription>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate("news")} className="gap-2">
+                Ver todas
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="flex items-start gap-4 p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors cursor-pointer"
+                  role="article"
+                  aria-label={notification.title}
+                  onClick={() => speak(`${notification.title}. ${notification.message}`)}
+                >
+                  <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
+                    <Bell className="h-5 w-5 text-chart-3" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium mb-1">{notification.title}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{notification.message}</p>
+                    <p className="text-xs text-muted-foreground mt-2">{notification.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   )
 }

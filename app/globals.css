@@ -1,6 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url("https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -341,4 +341,17 @@ html.cb-palette-tritanopia {
   --chart-3: oklch(0.52 0.14 200);
   --chart-4: oklch(0.48 0.12 180);
   --chart-5: oklch(0.4 0.1 160);
+}
+
+/* Cursor pointer para elementos interativos */
+button,
+a,
+[data-slot="select-trigger"],
+[data-slot="select-item"],
+[data-slot="tabs-trigger"],
+[data-slot="radio-group-item"],
+[data-slot="switch"],
+[data-slot="dialog-trigger"],
+[data-slot="drawer-trigger"] {
+  cursor: pointer;
 }

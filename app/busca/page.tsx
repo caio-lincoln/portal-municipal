@@ -11,7 +11,7 @@ export default function BuscaPage({ searchParams }: { searchParams: { q?: string
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Card>
+      <Card className="border-l-4 border-blue-700">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
