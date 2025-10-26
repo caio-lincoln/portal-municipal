@@ -16,7 +16,7 @@ export function Header({
   currentPage: NavPage
   onNavigate: (page: NavPage) => void
 }) {
-  const { speak } = useAccessibility()
+  const { speak, iconsOnly } = useAccessibility()
 
   const navItems = [
     { id: "dashboard", label: "Início", icon: Home },
@@ -72,7 +72,9 @@ export function Header({
                 <Button
                   key={item.id}
                   variant={isActive ? "default" : "outline"}
-                  className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 font-semibold text-xs sm:text-sm md:text-base transition-all whitespace-nowrap flex-shrink-0 min-h-[44px] ${
+                  className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-full transition-all whitespace-nowrap flex-shrink-0 min-h-[44px] ${
+                    iconsOnly ? "w-11 h-11 sm:w-12 sm:h-12 p-0" : "px-3 sm:px-4 md:px-6 py-2 sm:py-2.5"
+                  } font-semibold text-xs sm:text-sm md:text-base ${
                     isActive
                       ? "bg-white text-blue-700 shadow-md"
                       : "bg-blue-700 text-white hover:bg-blue-800 border-white/20"
@@ -81,8 +83,11 @@ export function Header({
                   aria-current={isActive ? "page" : undefined}
                   aria-label={item.label}
                 >
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-                  <span>{item.label}</span>
+                  <Icon
+                    className={`${iconsOnly ? "h-5 w-5 sm:h-6 sm:w-6" : "h-4 w-4 sm:h-5 sm:w-5"}`}
+                    aria-hidden="true"
+                  />
+                  {!iconsOnly && <span>{item.label}</span>}
                 </Button>
               )
             })}
