@@ -7,6 +7,7 @@ import { Dashboard } from "@/components/dashboard"
 import { ServiceRequests } from "@/components/service-requests"
 import { Appointments } from "@/components/appointments"
 import { News } from "@/components/news"
+import { CommandChat } from "@/components/command-chat"
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<"dashboard" | "services" | "appointments" | "news">("dashboard")
@@ -22,6 +23,7 @@ export default function Home() {
           {currentPage === "appointments" && <Appointments />}
           {currentPage === "news" && <News />}
         </main>
+        <CommandChat onNavigate={setCurrentPage} />
       </div>
     </div>
   )
