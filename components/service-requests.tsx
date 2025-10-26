@@ -11,10 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Filter, CheckCircle2, Clock, AlertCircle, MapPin } from "lucide-react"
 import { useAccessibility } from "@/components/accessibility-provider"
+import { Drawer } from "vaul"
 
 export function ServiceRequests() {
   const [showNewRequest, setShowNewRequest] = useState(false)
   const { speak } = useAccessibility()
+  const [selectedRequest, setSelectedRequest] = useState<null | (typeof requests)[number]>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
   const requests = [
     {
@@ -226,7 +229,14 @@ export function ServiceRequests() {
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <Badge variant={getStatusVariant(request.status)}>{request.status}</Badge>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedRequest(request)
+                            setIsDetailsOpen(true)
+                          }}
+                        >
                           Ver Detalhes
                         </Button>
                       </div>
@@ -234,6 +244,86 @@ export function ServiceRequests() {
                   </CardContent>
                 </Card>
               ))}
+
+              {/* Drawer de detalhes */}
+              <Drawer.Root open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <Drawer.Portal>
+                  <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+                  <Drawer.Content className="fixed bottom-0 left-0 right-0 mx-auto max-w-3xl rounded-t-2xl border bg-card shadow-lg">
+                    <div className="p-4">
+                      <div className="mx-auto w-12 h-1.5 rounded-full bg-muted" aria-hidden />
+                    </div>
+                    <div className="px-6 pb-6">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <Drawer.Title className="text-xl font-semibold">Detalhes da Solicitação</Drawer.Title>
+                          <Drawer.Description className="text-sm text-muted-foreground">Informações completas da solicitação selecionada</Drawer.Description>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => setIsDetailsOpen(false)} aria-label="Fechar">
+                          Fechar
+                        </Button>
+                      </div>
+
+                      {selectedRequest && (
+                        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">Protocolo</p>
+                            <p className="font-medium">{selectedRequest.id}</p>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">Tipo</p>
+                            <p className="font-medium">{selectedRequest.type}</p>
+                          </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <p className="text-sm text-muted-foreground">Descrição</p>
+                            <p className="font-medium">{selectedRequest.description}</p>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">Status</p>
+                            <Badge variant={getStatusVariant(selectedRequest.status)} className="w-fit">
+                              {selectedRequest.status}
+                            </Badge>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">Prioridade</p>
+                            <Badge variant={getPriorityVariant(selectedRequest.priority)} className="w-fit">
+                              {selectedRequest.priority}
+                            </Badge>
+                          </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <p className="text-sm text-muted-foreground">Localização</p>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              <p className="font-medium">{selectedRequest.location}</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">Abertura</p>
+                            <p className="font-medium">{selectedRequest.date}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="mt-8 flex gap-2">
+                        <Button
+                          onClick={() => {
+                            if (selectedRequest) {
+                              speak(
+                                `Solicitação ${selectedRequest.id}, ${selectedRequest.type}. Status ${selectedRequest.status}. Local ${selectedRequest.location}.`,
+                              )
+                            }
+                          }}
+                        >
+                          Ler Detalhes
+                        </Button>
+                        <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
+                          Fechar
+                        </Button>
+                      </div>
+                    </div>
+                  </Drawer.Content>
+                </Drawer.Portal>
+              </Drawer.Root>
             </TabsContent>
 
             <TabsContent value="pending">

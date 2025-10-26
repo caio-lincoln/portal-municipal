@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { AccessibilityProvider } from "@/components/accessibility-provider"
+import { FloatingAccessibility } from "@/components/floating-accessibility"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -23,8 +24,13 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`font-sans antialiased`}>
-        <AccessibilityProvider>{children}</AccessibilityProvider>
-        <Analytics />
+        <div className="app-filter-root">
+          <AccessibilityProvider>
+            <FloatingAccessibility />
+            {children}
+          </AccessibilityProvider>
+          <Analytics />
+        </div>
       </body>
     </html>
   )
