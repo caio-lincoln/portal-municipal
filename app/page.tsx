@@ -8,6 +8,7 @@ import { Appointments } from "@/components/appointments"
 import { News } from "@/components/news"
 import { VoiceChatModal } from "@/components/voice-chat-modal"
 import { AccessibilityModal } from "@/components/accessibility-modal"
+import { LibrasButton } from "@/components/libras-button"
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<"dashboard" | "services" | "appointments" | "news">("dashboard")
@@ -21,6 +22,7 @@ export default function Home() {
         {currentPage === "appointments" && <Appointments />}
         {currentPage === "news" && <News />}
       </main>
+      <LibrasButton />
       <VoiceChatModal onNavigate={setCurrentPage} />
       <AccessibilityModal />
       <footer className="w-full py-4 sm:py-6 mt-6 sm:mt-8 bg-gradient-to-r from-blue-700 to-indigo-700 text-white text-center text-xs sm:text-sm font-medium shadow-inner">

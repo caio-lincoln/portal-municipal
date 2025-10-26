@@ -59,7 +59,7 @@ export function AccessibilityModal() {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 bg-blue-700 hover:bg-blue-800"
+          className="fixed bottom-6 right-4 sm:right-6 z-40 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white transition-all duration-300 hover:scale-110 border-2 border-blue-400/30"
           aria-label="Abrir configurações de acessibilidade"
         >
           <Accessibility className="h-6 w-6" />

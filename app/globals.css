@@ -389,3 +389,13 @@ a,
     padding-right: 1rem;
   }
 }
+
+/* Hide default VLibras button since we have custom button */
+[vw-access-button] {
+  display: none !important;
+}
+
+/* Ensure VLibras widget appears properly when activated */
+[vw-plugin-wrapper] {
+  z-index: 9999 !important;
+}
