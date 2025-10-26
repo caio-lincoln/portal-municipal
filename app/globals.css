@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -132,43 +133,153 @@ html {
   --contrast-filter: none;
 }
 
-html.text-normal { font-size: 100%; }
-html.text-large { font-size: 112.5%; }
-html.text-xlarge { font-size: 125%; }
+html.text-normal {
+  font-size: 100%;
+}
+html.text-large {
+  font-size: 112.5%;
+}
+html.text-xlarge {
+  font-size: 125%;
+}
 
-html.contrast-boost { --contrast-filter: contrast(1.25); }
+html.contrast-boost {
+  --contrast-filter: contrast(1.25);
+}
 
-html.colorblind-grayscale { --cb-filter: grayscale(1); }
-html.colorblind-deuteranopia { --cb-filter: saturate(0.6) hue-rotate(20deg); }
-html.colorblind-protanopia { --cb-filter: saturate(0.6) hue-rotate(-20deg); }
-html.colorblind-tritanopia { --cb-filter: saturate(0.6) hue-rotate(180deg); }
+html.colorblind-grayscale {
+  --cb-filter: grayscale(1);
+}
+html.colorblind-deuteranopia {
+  --cb-filter: saturate(0.6) hue-rotate(20deg);
+}
+html.colorblind-protanopia {
+  --cb-filter: saturate(0.6) hue-rotate(-20deg);
+}
+html.colorblind-tritanopia {
+  --cb-filter: saturate(0.6) hue-rotate(180deg);
+}
 
 /* Combine filters so they can stack */
-body { filter: var(--cb-filter) var(--contrast-filter); }
-.app-filter-root { filter: var(--cb-filter) var(--contrast-filter); }
+body {
+  filter: var(--cb-filter) var(--contrast-filter);
+}
+.app-filter-root {
+  filter: var(--cb-filter) var(--contrast-filter);
+}
 
 /* Page zoom helpers (browser-dependent) */
-html.zoom-100 { zoom: 1; }
-html.zoom-125 { zoom: 1.25; }
-html.zoom-150 { zoom: 1.5; }
+html.zoom-100 {
+  zoom: 1;
+}
+html.zoom-125 {
+  zoom: 1.25;
+}
+html.zoom-150 {
+  zoom: 1.5;
+}
+
+/* Added new cognitive and reading accessibility styles */
+
+/* Dyslexia-friendly font */
+html.dyslexia-font {
+  font-family: "OpenDyslexic", sans-serif !important;
+}
+
+html.dyslexia-font * {
+  font-family: "OpenDyslexic", sans-serif !important;
+}
+
+/* Line spacing options */
+html.line-normal * {
+  line-height: 1.5;
+}
+html.line-relaxed * {
+  line-height: 1.75;
+}
+html.line-loose * {
+  line-height: 2;
+}
+
+/* Letter spacing options */
+html.letter-normal * {
+  letter-spacing: normal;
+}
+html.letter-wide * {
+  letter-spacing: 0.05em;
+}
+html.letter-wider * {
+  letter-spacing: 0.1em;
+}
+
+/* Focus mode - dims non-focused content */
+html.focus-mode main > *:not(:focus-within) {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+html.focus-mode main > *:focus-within {
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Reading guide - highlights current line */
+html.reading-guide p:hover,
+html.reading-guide li:hover,
+html.reading-guide h1:hover,
+html.reading-guide h2:hover,
+html.reading-guide h3:hover {
+  background-color: rgba(var(--primary), 0.1);
+  outline: 2px solid rgba(var(--primary), 0.3);
+  outline-offset: 2px;
+}
+
+/* Simplified layout - reduces visual complexity */
+html.simplified-layout .shadow-lg,
+html.simplified-layout .shadow-xl,
+html.simplified-layout .shadow-2xl {
+  box-shadow: none !important;
+}
+
+html.simplified-layout .backdrop-blur-xl,
+html.simplified-layout .backdrop-blur-lg {
+  backdrop-filter: none !important;
+}
+
+html.simplified-layout .bg-gradient-to-br,
+html.simplified-layout .bg-gradient-to-r {
+  background-image: none !important;
+  background-color: var(--primary) !important;
+}
+
+/* Reduced motion */
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
 
 /* Accessible colorblind palettes (override CSS variables globally) */
 html.cb-palette-grayscale {
-  --primary: oklch(0.30 0 0);
+  --primary: oklch(0.3 0 0);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.70 0 0);
+  --secondary: oklch(0.7 0 0);
   --secondary-foreground: oklch(0.15 0 0);
   --accent: oklch(0.85 0 0);
-  --accent-foreground: oklch(0.20 0 0);
+  --accent-foreground: oklch(0.2 0 0);
   --muted: oklch(0.92 0 0);
-  --muted-foreground: oklch(0.40 0 0);
-  --destructive: oklch(0.40 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --destructive: oklch(0.4 0 0);
   --destructive-foreground: oklch(0.98 0 0);
-  --ring: oklch(0.30 0 0);
+  --ring: oklch(0.3 0 0);
   --chart-1: oklch(0.35 0 0);
-  --chart-2: oklch(0.50 0 0);
+  --chart-2: oklch(0.5 0 0);
   --chart-3: oklch(0.65 0 0);
-  --chart-4: oklch(0.80 0 0);
+  --chart-4: oklch(0.8 0 0);
   --chart-5: oklch(0.92 0 0);
 }
 
@@ -177,7 +288,7 @@ html.cb-palette-deuteranopia {
   --primary: oklch(0.62 0.12 250);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.20 0.01 240);
+  --secondary-foreground: oklch(0.2 0.01 240);
   --accent: oklch(0.78 0.12 60);
   --accent-foreground: oklch(0.15 0 0);
   --muted: oklch(0.97 0.003 240);
@@ -187,7 +298,7 @@ html.cb-palette-deuteranopia {
   --ring: oklch(0.62 0.12 250);
   --chart-1: oklch(0.62 0.12 250);
   --chart-2: oklch(0.75 0.12 60);
-  --chart-3: oklch(0.58 0.10 160);
+  --chart-3: oklch(0.58 0.1 160);
   --chart-4: oklch(0.52 0.14 200);
   --chart-5: oklch(0.48 0.12 180);
 }
@@ -197,17 +308,17 @@ html.cb-palette-protanopia {
   --primary: oklch(0.62 0.12 250);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.20 0.01 240);
-  --accent: oklch(0.72 0.10 200);
+  --secondary-foreground: oklch(0.2 0.01 240);
+  --accent: oklch(0.72 0.1 200);
   --accent-foreground: oklch(0.15 0 0);
   --muted: oklch(0.97 0.003 240);
   --muted-foreground: oklch(0.48 0.01 240);
-  --destructive: oklch(0.50 0.16 40);
+  --destructive: oklch(0.5 0.16 40);
   --destructive-foreground: oklch(0.99 0 0);
   --ring: oklch(0.62 0.12 250);
   --chart-1: oklch(0.62 0.12 250);
-  --chart-2: oklch(0.72 0.10 200);
-  --chart-3: oklch(0.65 0.10 160);
+  --chart-2: oklch(0.72 0.1 200);
+  --chart-3: oklch(0.65 0.1 160);
   --chart-4: oklch(0.75 0.12 60);
   --chart-5: oklch(0.48 0.12 180);
 }
@@ -217,7 +328,7 @@ html.cb-palette-tritanopia {
   --primary: oklch(0.68 0.14 60);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.94 0.02 145);
-  --secondary-foreground: oklch(0.20 0.01 240);
+  --secondary-foreground: oklch(0.2 0.01 240);
   --accent: oklch(0.62 0.14 145);
   --accent-foreground: oklch(0.15 0 0);
   --muted: oklch(0.97 0.003 240);
@@ -229,5 +340,5 @@ html.cb-palette-tritanopia {
   --chart-2: oklch(0.62 0.14 145);
   --chart-3: oklch(0.52 0.14 200);
   --chart-4: oklch(0.48 0.12 180);
-  --chart-5: oklch(0.40 0.10 160);
+  --chart-5: oklch(0.4 0.1 160);
 }

@@ -7,7 +7,8 @@ import { Dashboard } from "@/components/dashboard"
 import { ServiceRequests } from "@/components/service-requests"
 import { Appointments } from "@/components/appointments"
 import { News } from "@/components/news"
-import { CommandChat } from "@/components/command-chat"
+import { VoiceChatModal } from "@/components/voice-chat-modal"
+import { AccessibilityModal } from "@/components/accessibility-modal"
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<"dashboard" | "services" | "appointments" | "news">("dashboard")
@@ -23,8 +24,9 @@ export default function Home() {
           {currentPage === "appointments" && <Appointments />}
           {currentPage === "news" && <News />}
         </main>
-        <CommandChat onNavigate={setCurrentPage} />
       </div>
+      <VoiceChatModal onNavigate={setCurrentPage} />
+      <AccessibilityModal />
     </div>
   )
 }

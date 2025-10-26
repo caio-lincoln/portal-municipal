@@ -13,6 +13,20 @@ interface AccessibilityContextType {
   toggleContrastBoost: () => void
   pageZoom: 100 | 125 | 150
   setPageZoom: (zoom: 100 | 125 | 150) => void
+  dyslexiaFont: boolean
+  toggleDyslexiaFont: () => void
+  lineSpacing: "normal" | "relaxed" | "loose"
+  setLineSpacing: (spacing: "normal" | "relaxed" | "loose") => void
+  letterSpacing: "normal" | "wide" | "wider"
+  setLetterSpacing: (spacing: "normal" | "wide" | "wider") => void
+  focusMode: boolean
+  toggleFocusMode: () => void
+  readingGuide: boolean
+  toggleReadingGuide: () => void
+  simplifiedLayout: boolean
+  toggleSimplifiedLayout: () => void
+  animationsReduced: boolean
+  toggleAnimationsReduced: () => void
   speak: (text: string) => void
 }
 
@@ -26,6 +40,13 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   >("none")
   const [contrastBoost, setContrastBoost] = useState(false)
   const [pageZoom, setPageZoom] = useState<100 | 125 | 150>(100)
+  const [dyslexiaFont, setDyslexiaFont] = useState(false)
+  const [lineSpacing, setLineSpacing] = useState<"normal" | "relaxed" | "loose">("normal")
+  const [letterSpacing, setLetterSpacing] = useState<"normal" | "wide" | "wider">("normal")
+  const [focusMode, setFocusMode] = useState(false)
+  const [readingGuide, setReadingGuide] = useState(false)
+  const [simplifiedLayout, setSimplifiedLayout] = useState(false)
+  const [animationsReduced, setAnimationsReduced] = useState(false)
 
   useEffect(() => {
     // Load preferences from localStorage
@@ -35,13 +56,27 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
       (localStorage.getItem("colorBlindMode") as "none" | "grayscale" | "deuteranopia" | "protanopia" | "tritanopia") ||
       "none"
     const savedContrastBoost = localStorage.getItem("contrastBoost") === "true"
-    const savedZoom = (parseInt(localStorage.getItem("pageZoom") || "100", 10) as 100 | 125 | 150) || 100
+    const savedZoom = (Number.parseInt(localStorage.getItem("pageZoom") || "100", 10) as 100 | 125 | 150) || 100
+    const savedDyslexiaFont = localStorage.getItem("dyslexiaFont") === "true"
+    const savedLineSpacing = (localStorage.getItem("lineSpacing") as "normal" | "relaxed" | "loose") || "normal"
+    const savedLetterSpacing = (localStorage.getItem("letterSpacing") as "normal" | "wide" | "wider") || "normal"
+    const savedFocusMode = localStorage.getItem("focusMode") === "true"
+    const savedReadingGuide = localStorage.getItem("readingGuide") === "true"
+    const savedSimplifiedLayout = localStorage.getItem("simplifiedLayout") === "true"
+    const savedAnimationsReduced = localStorage.getItem("animationsReduced") === "true"
 
     setHighContrast(savedContrast)
     setFontSize(savedFontSize)
     setColorBlindMode(savedColorBlindMode)
     setContrastBoost(savedContrastBoost)
     setPageZoom(savedZoom)
+    setDyslexiaFont(savedDyslexiaFont)
+    setLineSpacing(savedLineSpacing)
+    setLetterSpacing(savedLetterSpacing)
+    setFocusMode(savedFocusMode)
+    setReadingGuide(savedReadingGuide)
+    setSimplifiedLayout(savedSimplifiedLayout)
+    setAnimationsReduced(savedAnimationsReduced)
   }, [])
 
   useEffect(() => {
@@ -102,8 +137,70 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("pageZoom", String(pageZoom))
   }, [pageZoom])
 
+  useEffect(() => {
+    if (dyslexiaFont) {
+      document.documentElement.classList.add("dyslexia-font")
+    } else {
+      document.documentElement.classList.remove("dyslexia-font")
+    }
+    localStorage.setItem("dyslexiaFont", String(dyslexiaFont))
+  }, [dyslexiaFont])
+
+  useEffect(() => {
+    document.documentElement.classList.remove("line-normal", "line-relaxed", "line-loose")
+    document.documentElement.classList.add(`line-${lineSpacing}`)
+    localStorage.setItem("lineSpacing", lineSpacing)
+  }, [lineSpacing])
+
+  useEffect(() => {
+    document.documentElement.classList.remove("letter-normal", "letter-wide", "letter-wider")
+    document.documentElement.classList.add(`letter-${letterSpacing}`)
+    localStorage.setItem("letterSpacing", letterSpacing)
+  }, [letterSpacing])
+
+  useEffect(() => {
+    if (focusMode) {
+      document.documentElement.classList.add("focus-mode")
+    } else {
+      document.documentElement.classList.remove("focus-mode")
+    }
+    localStorage.setItem("focusMode", String(focusMode))
+  }, [focusMode])
+
+  useEffect(() => {
+    if (readingGuide) {
+      document.documentElement.classList.add("reading-guide")
+    } else {
+      document.documentElement.classList.remove("reading-guide")
+    }
+    localStorage.setItem("readingGuide", String(readingGuide))
+  }, [readingGuide])
+
+  useEffect(() => {
+    if (simplifiedLayout) {
+      document.documentElement.classList.add("simplified-layout")
+    } else {
+      document.documentElement.classList.remove("simplified-layout")
+    }
+    localStorage.setItem("simplifiedLayout", String(simplifiedLayout))
+  }, [simplifiedLayout])
+
+  useEffect(() => {
+    if (animationsReduced) {
+      document.documentElement.classList.add("reduce-motion")
+    } else {
+      document.documentElement.classList.remove("reduce-motion")
+    }
+    localStorage.setItem("animationsReduced", String(animationsReduced))
+  }, [animationsReduced])
+
   const toggleHighContrast = () => setHighContrast(!highContrast)
   const toggleContrastBoost = () => setContrastBoost((v) => !v)
+  const toggleDyslexiaFont = () => setDyslexiaFont(!dyslexiaFont)
+  const toggleFocusMode = () => setFocusMode(!focusMode)
+  const toggleReadingGuide = () => setReadingGuide(!readingGuide)
+  const toggleSimplifiedLayout = () => setSimplifiedLayout(!simplifiedLayout)
+  const toggleAnimationsReduced = () => setAnimationsReduced(!animationsReduced)
 
   const speak = (text: string) => {
     if ("speechSynthesis" in window) {
@@ -127,6 +224,20 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
         toggleContrastBoost,
         pageZoom,
         setPageZoom,
+        dyslexiaFont,
+        toggleDyslexiaFont,
+        lineSpacing,
+        setLineSpacing,
+        letterSpacing,
+        setLetterSpacing,
+        focusMode,
+        toggleFocusMode,
+        readingGuide,
+        toggleReadingGuide,
+        simplifiedLayout,
+        toggleSimplifiedLayout,
+        animationsReduced,
+        toggleAnimationsReduced,
         speak,
       }}
     >
