@@ -99,11 +99,6 @@ export function ServiceRequests() {
 
   return (
     <div className="space-y-10">
-      <section>
-        <h1 className="text-3xl font-bold text-blue-900 mb-2">Solicitações de Serviço</h1>
-        <p className="text-muted-foreground">Abra novas solicitações e acompanhe o andamento</p>
-      </section>
-
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Solicitações de Serviço</h1>
