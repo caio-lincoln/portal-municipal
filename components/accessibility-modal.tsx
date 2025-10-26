@@ -1,7 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Accessibility, Eye, Type, Palette, ZoomIn, Volume2, BookOpen, Brain, Focus, Sparkles } from "lucide-react"
+import {
+  Accessibility,
+  Eye,
+  Type,
+  Palette,
+  ZoomIn,
+  Volume2,
+  BookOpen,
+  Brain,
+  Focus,
+  Sparkles,
+  LayoutGrid,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
@@ -38,6 +50,8 @@ export function AccessibilityModal() {
     toggleSimplifiedLayout,
     animationsReduced,
     toggleAnimationsReduced,
+    iconsOnly,
+    toggleIconsOnly,
   } = useAccessibility()
 
   return (
@@ -280,6 +294,22 @@ export function AccessibilityModal() {
               <Switch id="simplified-layout" checked={simplifiedLayout} onCheckedChange={toggleSimplifiedLayout} />
             </div>
 
+            {/* Icons Only */}
+            <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <LayoutGrid className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <Label htmlFor="icons-only" className="text-base font-semibold cursor-pointer">
+                    Somente Ícones
+                  </Label>
+                  <p className="text-sm text-muted-foreground">Mostra apenas ícones no menu lateral para simplificar</p>
+                </div>
+              </div>
+              <Switch id="icons-only" checked={iconsOnly} onCheckedChange={toggleIconsOnly} />
+            </div>
+
             {/* Reduced Animations */}
             <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
               <div className="flex items-center gap-4">
@@ -295,8 +325,6 @@ export function AccessibilityModal() {
               </div>
               <Switch id="reduced-animations" checked={animationsReduced} onCheckedChange={toggleAnimationsReduced} />
             </div>
-
-            <Separator />
 
             {/* Line Spacing */}
             <div className="space-y-4">

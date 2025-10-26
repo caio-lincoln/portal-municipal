@@ -27,6 +27,8 @@ interface AccessibilityContextType {
   toggleSimplifiedLayout: () => void
   animationsReduced: boolean
   toggleAnimationsReduced: () => void
+  iconsOnly: boolean
+  toggleIconsOnly: () => void
   speak: (text: string) => void
 }
 
@@ -47,6 +49,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [readingGuide, setReadingGuide] = useState(false)
   const [simplifiedLayout, setSimplifiedLayout] = useState(false)
   const [animationsReduced, setAnimationsReduced] = useState(false)
+  const [iconsOnly, setIconsOnly] = useState(false)
 
   useEffect(() => {
     // Load preferences from localStorage
@@ -64,6 +67,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     const savedReadingGuide = localStorage.getItem("readingGuide") === "true"
     const savedSimplifiedLayout = localStorage.getItem("simplifiedLayout") === "true"
     const savedAnimationsReduced = localStorage.getItem("animationsReduced") === "true"
+    const savedIconsOnly = localStorage.getItem("iconsOnly") === "true"
 
     setHighContrast(savedContrast)
     setFontSize(savedFontSize)
@@ -77,6 +81,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     setReadingGuide(savedReadingGuide)
     setSimplifiedLayout(savedSimplifiedLayout)
     setAnimationsReduced(savedAnimationsReduced)
+    setIconsOnly(savedIconsOnly)
   }, [])
 
   useEffect(() => {
@@ -194,6 +199,15 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("animationsReduced", String(animationsReduced))
   }, [animationsReduced])
 
+  useEffect(() => {
+    if (iconsOnly) {
+      document.documentElement.classList.add("icons-only")
+    } else {
+      document.documentElement.classList.remove("icons-only")
+    }
+    localStorage.setItem("iconsOnly", String(iconsOnly))
+  }, [iconsOnly])
+
   const toggleHighContrast = () => setHighContrast(!highContrast)
   const toggleContrastBoost = () => setContrastBoost((v) => !v)
   const toggleDyslexiaFont = () => setDyslexiaFont(!dyslexiaFont)
@@ -201,6 +215,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const toggleReadingGuide = () => setReadingGuide(!readingGuide)
   const toggleSimplifiedLayout = () => setSimplifiedLayout(!simplifiedLayout)
   const toggleAnimationsReduced = () => setAnimationsReduced(!animationsReduced)
+  const toggleIconsOnly = () => setIconsOnly(!iconsOnly)
 
   const speak = (text: string) => {
     if ("speechSynthesis" in window) {
@@ -238,6 +253,8 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
         toggleSimplifiedLayout,
         animationsReduced,
         toggleAnimationsReduced,
+        iconsOnly,
+        toggleIconsOnly,
         speak,
       }}
     >

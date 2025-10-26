@@ -364,3 +364,28 @@ a,
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Added mobile-specific improvements */
+/* Touch-friendly minimum sizes for mobile */
+@media (max-width: 768px) {
+  button,
+  a[role="button"],
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Improved mobile spacing */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
