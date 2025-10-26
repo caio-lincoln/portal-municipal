@@ -9,12 +9,50 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Clock, MapPin, Plus, User } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAccessibility } from "@/components/accessibility-provider"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+
+interface Appointment {
+  id: string
+  service: string
+  department: string
+  date: string
+  time: string
+  location: string
+  status: string
+}
 
 export function Appointments() {
   const [showNewAppointment, setShowNewAppointment] = useState(false)
   const { speak } = useAccessibility()
 
-  const appointments = [
+  const [rescheduleDialog, setRescheduleDialog] = useState<{
+    open: boolean
+    appointment: Appointment | null
+    newDate: string
+    newTime: string
+  }>({
+    open: false,
+    appointment: null,
+    newDate: "",
+    newTime: "",
+  })
+
+  const [cancelDialog, setCancelDialog] = useState<{
+    open: boolean
+    appointment: Appointment | null
+  }>({
+    open: false,
+    appointment: null,
+  })
+
+  const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: "A001",
       service: "Atendimento - Secretaria de Saúde",
@@ -42,7 +80,7 @@ export function Appointments() {
       location: "CRAS - Bairro Industrial",
       status: "Concluído",
     },
-  ]
+  ])
 
   const availableServices = [
     { value: "health", label: "Atendimento - Secretaria de Saúde", department: "Secretaria de Saúde" },
@@ -51,6 +89,55 @@ export function Appointments() {
     { value: "education", label: "Matrícula Escolar", department: "Secretaria de Educação" },
     { value: "tax", label: "Atendimento Fiscal", department: "Secretaria de Finanças" },
   ]
+
+  const handleReschedule = (appointment: Appointment) => {
+    setRescheduleDialog({
+      open: true,
+      appointment,
+      newDate: "",
+      newTime: "",
+    })
+  }
+
+  const confirmReschedule = () => {
+    if (!rescheduleDialog.appointment || !rescheduleDialog.newDate || !rescheduleDialog.newTime) {
+      speak("Por favor, selecione uma nova data e horário")
+      return
+    }
+
+    // Convert date from YYYY-MM-DD to DD/MM/YYYY
+    const [year, month, day] = rescheduleDialog.newDate.split("-")
+    const formattedDate = `${day}/${month}/${year}`
+
+    setAppointments((prev) =>
+      prev.map((apt) =>
+        apt.id === rescheduleDialog.appointment?.id
+          ? { ...apt, date: formattedDate, time: rescheduleDialog.newTime }
+          : apt,
+      ),
+    )
+
+    speak(`Agendamento reagendado para ${formattedDate} às ${rescheduleDialog.newTime}`)
+    setRescheduleDialog({ open: false, appointment: null, newDate: "", newTime: "" })
+  }
+
+  const handleCancel = (appointment: Appointment) => {
+    setCancelDialog({
+      open: true,
+      appointment,
+    })
+  }
+
+  const confirmCancel = () => {
+    if (!cancelDialog.appointment) return
+
+    setAppointments((prev) =>
+      prev.map((apt) => (apt.id === cancelDialog.appointment?.id ? { ...apt, status: "Cancelado" } : apt)),
+    )
+
+    speak("Agendamento cancelado com sucesso")
+    setCancelDialog({ open: false, appointment: null })
+  }
 
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
@@ -223,10 +310,20 @@ export function Appointments() {
                       </div>
 
                       <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                        <Button variant="outline" size="sm" className="w-full sm:flex-1 bg-transparent min-h-[40px]">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full sm:flex-1 bg-transparent min-h-[40px]"
+                          onClick={() => handleReschedule(appointment)}
+                        >
                           Reagendar
                         </Button>
-                        <Button variant="outline" size="sm" className="w-full sm:flex-1 bg-transparent min-h-[40px]">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full sm:flex-1 bg-transparent min-h-[40px]"
+                          onClick={() => handleCancel(appointment)}
+                        >
                           Cancelar
                         </Button>
                       </div>
@@ -302,6 +399,106 @@ export function Appointments() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={rescheduleDialog.open} onOpenChange={(open) => setRescheduleDialog({ ...rescheduleDialog, open })}>
+        <DialogContent className="sm:max-w-[425px] max-w-[95vw]">
+          <DialogHeader>
+            <DialogTitle>Reagendar Agendamento</DialogTitle>
+            <DialogDescription>Selecione uma nova data e horário para o agendamento</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reschedule-service" className="text-sm">
+                Serviço
+              </Label>
+              <Input
+                id="reschedule-service"
+                value={rescheduleDialog.appointment?.service || ""}
+                disabled
+                className="min-h-[44px] text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reschedule-date" className="text-sm">
+                Nova Data
+              </Label>
+              <Input
+                id="reschedule-date"
+                type="date"
+                value={rescheduleDialog.newDate}
+                onChange={(e) => setRescheduleDialog({ ...rescheduleDialog, newDate: e.target.value })}
+                className="min-h-[44px] text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reschedule-time" className="text-sm">
+                Novo Horário
+              </Label>
+              <Select
+                value={rescheduleDialog.newTime}
+                onValueChange={(value) => setRescheduleDialog({ ...rescheduleDialog, newTime: value })}
+              >
+                <SelectTrigger id="reschedule-time" className="min-h-[44px] text-base">
+                  <SelectValue placeholder="Selecione o horário" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="09:00">09:00</SelectItem>
+                  <SelectItem value="10:00">10:00</SelectItem>
+                  <SelectItem value="11:00">11:00</SelectItem>
+                  <SelectItem value="14:00">14:00</SelectItem>
+                  <SelectItem value="15:00">15:00</SelectItem>
+                  <SelectItem value="16:00">16:00</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setRescheduleDialog({ open: false, appointment: null, newDate: "", newTime: "" })}
+              className="w-full sm:w-auto min-h-[44px]"
+            >
+              Cancelar
+            </Button>
+            <Button onClick={confirmReschedule} className="w-full sm:w-auto min-h-[44px]">
+              Confirmar Reagendamento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={cancelDialog.open} onOpenChange={(open) => setCancelDialog({ ...cancelDialog, open })}>
+        <DialogContent className="sm:max-w-[425px] max-w-[95vw]">
+          <DialogHeader>
+            <DialogTitle>Cancelar Agendamento</DialogTitle>
+            <DialogDescription>Tem certeza que deseja cancelar este agendamento?</DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">{cancelDialog.appointment?.service}</p>
+              <p className="text-sm text-muted-foreground">{cancelDialog.appointment?.department}</p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <CalendarIcon className="h-4 w-4" />
+                <span>{cancelDialog.appointment?.date}</span>
+                <Clock className="h-4 w-4 ml-2" />
+                <span>{cancelDialog.appointment?.time}</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setCancelDialog({ open: false, appointment: null })}
+              className="w-full sm:w-auto min-h-[44px]"
+            >
+              Não, manter agendamento
+            </Button>
+            <Button variant="destructive" onClick={confirmCancel} className="w-full sm:w-auto min-h-[44px]">
+              Sim, cancelar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
